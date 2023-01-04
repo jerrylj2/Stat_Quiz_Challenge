@@ -1,10 +1,11 @@
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
+// import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { CardActionArea } from '@mui/material';
 import Box from '@mui/material/Box';
 import StatReveal from './StatReveal';
+import Button from '@mui/material/Button';
 
 interface PlayerDetails {
     players: {
@@ -43,13 +44,24 @@ const PlayerCard = (props: PlayerDetails) => {
                         position: "relative"
                     }}
                 >
-                    <CardMedia
+                    {/* <CardMedia
                         component="img"
                         height="230"
                         image={"https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/260x190/" + props.players.id + ".png"}
                         sx={{ width: 260 }}
                         alt={props.players.name}
-                    />
+                    /> */}
+                    <Button
+                        sx={{ height: 230 }}
+                        color="success"
+                        fullWidth
+                        onClick={() => {
+                            colors.splice(props.player_num - 1, 1, props.active_color);
+                            props.updateImageColor(colors[0], colors[1], colors[2], colors[3]);
+                            props.updateSubmission(props.players.stat);
+                            props.updateSelectedPlayer(props.player_num);
+                        }}
+                    ></Button>
                     <StatReveal 
                         open={props.open} 
                         player_num={props.player_num} 

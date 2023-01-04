@@ -23,7 +23,7 @@ const theme = createTheme({
 const Quiz = () => {
     const [searchparams] = useSearchParams();
     const username: string = searchparams.get("username") as string;
-    const default_color: string = "#c1c1c1";
+    const default_color: string = "black";
     const active_color: string = "#8ccae4";
     const correct_color: string = "#73e673";
     const wrong_color: string = "#f15757";
