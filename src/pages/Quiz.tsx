@@ -343,7 +343,7 @@ const Quiz = () => {
                         addCount={addCount}
                     ></Popup>
                     <Typography variant="body2" color="text.secondary" align="center" mt={2}>
-                        * Data is from NBA.com
+                        * Names and data are from NBA.com
                     </Typography>
                 </Box>
             </Container>

@@ -9,18 +9,24 @@ interface AppBarUsername {
 }
 
 const TopAppBar = (props: AppBarUsername) => {
+  let username: string;
+  if (props.username.length > 8) {
+    username = props.username.substring(0, 8) + "...";
+  } else {
+    username = props.username;
+  }
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
-        <Toolbar sx={{ color: "black", backgroundColor: "#ffad33"}} variant="dense">
+        <Toolbar sx={{ color: "black", backgroundColor: "#ffad33" }} variant="dense">
           <Typography variant="h6" >
-            {props.username}
+            {props.count}
           </Typography>
-          <Typography variant="h6" component="h5" sx={{margin: "auto", fontWeight: "600"}}>
+          <Typography variant="h6" component="h5" align="center" sx={{ margin: "auto", fontWeight: "600" }}>
             Stat Quiz Challenge
           </Typography>
           <Typography variant="h6" >
-            {props.count}
+            {username}
           </Typography>
         </Toolbar>
       </AppBar>

@@ -27,10 +27,31 @@ interface PlayerDetails {
 
 const PlayerCard = (props: PlayerDetails) => {
     let colors: string[] = [props.default_color, props.default_color, props.default_color, props.default_color];
-    
+    let shadow: string = "";
+    switch (props.player_num) {
+        case 1:
+            shadow = "-10px 10px 5px grey";
+            break;
+        case 2:
+            shadow = "10px 10px 5px grey";
+            break;
+        case 3:
+            shadow = "-10px 10px 5px grey";
+            break;
+        case 4:
+            shadow = "10px 10px 5px grey";
+            break;
+    }
+
     return (
         <Card
-            sx={{ maxWidth: 260, backgroundColor: props.players.color }}
+            sx={{
+                maxWidth: 260,
+                backgroundColor: props.players.color,
+                ':hover': {
+                    boxShadow: shadow
+                },
+            }}
             onClick={() => {
                 colors.splice(props.player_num - 1, 1, props.active_color);
                 props.updateImageColor(colors[0], colors[1], colors[2], colors[3]);
@@ -39,7 +60,7 @@ const PlayerCard = (props: PlayerDetails) => {
             }}
         >
             <CardActionArea>
-                <Box 
+                <Box
                     sx={{
                         position: "relative"
                     }}
@@ -62,9 +83,9 @@ const PlayerCard = (props: PlayerDetails) => {
                             props.updateSelectedPlayer(props.player_num);
                         }}
                     ></Button>
-                    <StatReveal 
-                        open={props.open} 
-                        player_num={props.player_num} 
+                    <StatReveal
+                        open={props.open}
+                        player_num={props.player_num}
                         selectedPlayer={props.selectedPlayer}
                         player_stat={props.players.stat}
                         correctAnswer={props.correctAnswer}
