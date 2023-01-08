@@ -222,7 +222,7 @@ const Quiz = () => {
                     random_rank_arr.push(removed_element);
                 };
 
-                updateImageColor(default_color, default_color, default_color, default_color)
+                updateImageColor(default_color, default_color, default_color, default_color);
                 setCorrectAnswer(json.resultSet.rowSet[random_rank_arr[random_rank_arr.indexOf(rank)]][stat_index].toLocaleString('en-US'));
                 setSubmissionCheck("");
                 setSelectedPlayer(0);

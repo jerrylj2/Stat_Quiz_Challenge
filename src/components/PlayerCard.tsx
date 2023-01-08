@@ -41,7 +41,7 @@ const PlayerCard = (props: PlayerDetails) => {
         case 4:
             shadow = "10px 10px 5px grey";
             break;
-    }
+    };
 
     return (
         <Card

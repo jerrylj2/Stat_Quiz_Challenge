@@ -37,7 +37,7 @@ declare module '@mui/material/Button' {
     }
 };
 
-function Copyright(props: any) {
+const Copyright = (props: any) => {
     return (
         <Typography variant="body2" color="text.secondary" align="center" {...props}>
             © 2023 | designed & coded by Jerry Jackson

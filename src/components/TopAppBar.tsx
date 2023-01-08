@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 interface AppBarUsername {
   username: string,
   count: string
-}
+};
 
 const TopAppBar = (props: AppBarUsername) => {
   let username: string;
@@ -14,7 +14,8 @@ const TopAppBar = (props: AppBarUsername) => {
     username = props.username.substring(0, 8) + "...";
   } else {
     username = props.username;
-  }
+  };
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
