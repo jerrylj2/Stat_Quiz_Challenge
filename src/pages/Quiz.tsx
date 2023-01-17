@@ -271,6 +271,7 @@ const Quiz = () => {
                         justifyContent: 'center',
                         minHeight: "88vh", 
                     }}
+                    mt={3}
                 >
                     <Box>
                         <Typography variant="h6" component="h2" align="center">
@@ -342,7 +343,7 @@ const Quiz = () => {
                         count={count} 
                         addCount={addCount}
                     ></Popup>
-                    <Typography variant="body2" color="text.secondary" align="center" mt={2}>
+                    <Typography variant="body2" color="text.secondary" align="center" mt={2} mb={5}>
                         * Names and data are from NBA.com
                     </Typography>
                 </Box>
