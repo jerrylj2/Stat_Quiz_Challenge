@@ -41,7 +41,7 @@ const Selection = () => {
     const [searchparams] = useSearchParams();
     const navigate = useNavigate();
     const [field, setField] = useState<string>("NBA");
-    const sendUsername = (name: string) => {
+    const toQuiz = (name: string) => {
         navigate({
             pathname: "/quiz",
             search: createSearchParams({
@@ -54,7 +54,13 @@ const Selection = () => {
 
     return (
         <ThemeProvider theme={theme}>
-            <TopAppBar username={username} count={""}></TopAppBar>
+            <TopAppBar 
+                username={username} 
+                count={""} 
+                score={0}
+                showCount={false}
+                showScore={false}
+            ></TopAppBar>
             <Container component="main" maxWidth="lg">
                 <Box 
                     sx={{
@@ -87,7 +93,7 @@ const Selection = () => {
                     sx={{ position: 'fixed', bottom: 0, left: 0, right: 0, borderRadius: 0 }}
                     size="large"
                     onClick={() => {
-                        sendUsername(username)
+                        toQuiz(username)
                     }}
                 >
                     Start Quiz!

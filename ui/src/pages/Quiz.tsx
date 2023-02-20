@@ -100,6 +100,8 @@ const Quiz = () => {
     const [statLink, setStatLink] = useState<string>("");
     const [statAbbrv, setStatAbbrv] = useState<string>("");
     const [statName, setStatName] = useState<string>("");
+    const [startTime, setStartTime] = useState<number | undefined>();
+    const [score, setScore] = useState<number>(0);
     
     const updateImageColor = (color1: string, color2: string, color3: string, color4: string): void => {
         setPlayer(previousState => {
@@ -137,6 +139,21 @@ const Quiz = () => {
         disabledQuizButton = false;
     };
 
+    const tally = () => {
+        if(startTime !== undefined){
+            let timeSpent: number = (performance.now() - startTime) / 1000;
+            if(timeSpent < 10){
+                setScore(score + 100);
+            } else if(timeSpent < 20){
+                setScore(score + 75);
+            } else if(timeSpent < 20){
+                setScore(score + 50);
+            } else {
+                setScore(score + 25);
+            };
+        };
+    };
+    
     const check = (selection: number | undefined, answer: number | undefined, player_num: number): void => {
         let colors: string[] = [];
         let stats: number[] = [player.player1.stat, player.player2.stat, player.player3.stat, player.player4.stat];
@@ -144,6 +161,7 @@ const Quiz = () => {
         for (let i = 0; i < 4; i++) {
             if ((i === player_num - 1) && (selection === answer)) {
                 setSubmissionCheck("correct");
+                tally();
                 colors.push(correct_color);
             } else if ((i === player_num - 1) && (selection !== answer)) {
                 setSubmissionCheck("incorrect");
@@ -162,13 +180,13 @@ const Quiz = () => {
         let settings = { method: "Get" };
 
         // Post count and field to the server
-        axios.post("http://localhost:3001/parameters", {
+        axios.post("/parameters", {
             count: count,
             field: field
         });
 
         // Gets stat details stored in DB
-        fetch("/api")
+        fetch("/statdetails")
             .then((res) => res.json())
             .then((data) => {
                 setStatLink(data.statDetails.StatLink)
@@ -226,12 +244,19 @@ const Quiz = () => {
                         color: default_color
                     }
                 });
+                setStartTime(performance.now())
             });
     }, [count, statAbbrv, statLink, statName]);
 
     return (
         <ThemeProvider theme={theme}>
-            <TopAppBar username={username} count={count + "/10"}></TopAppBar>
+            <TopAppBar 
+                username={username} 
+                count={count + "/10"} 
+                score={score}
+                showCount={true}
+                showScore={true}
+            ></TopAppBar>
             <Container maxWidth="sm" component="main" >
                 <Box 
                     sx={{ 
@@ -312,6 +337,9 @@ const Quiz = () => {
                         answer={submissionCheck} 
                         count={count} 
                         addCount={addCount}
+                        tally={tally}
+                        score={score}
+                        field={field}
                     ></Popup>
                     <Typography variant="body2" color="text.secondary" align="center" mt={2} mb={5}>
                         * Names and data are from NBA.com

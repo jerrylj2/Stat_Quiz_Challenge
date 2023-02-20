@@ -2,6 +2,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
+import { useSearchParams, createSearchParams, useNavigate } from 'react-router-dom';
 
 interface PopupType {
     handleClose(): void,
@@ -9,6 +10,9 @@ interface PopupType {
     answer: string,
     count: number,
     addCount(): void,
+    tally(): void,
+    score: number,
+    field: string
 };
 
 const style = {
@@ -25,7 +29,21 @@ const style = {
 };
 
 const Popup = (props: PopupType) => {
-    if(props.answer === "correct" && props.count !== 10){
+    const [searchparams] = useSearchParams();
+    const navigate = useNavigate();
+    const toLeaderboard = (name: string) => {
+        navigate({
+            pathname: "/leaderboard",
+            search: createSearchParams({
+                username: name,
+                field: props.field,
+                score: (props.score as unknown) as string
+            }).toString()
+        });
+    };
+    const username: string = searchparams.get("username") as string;
+
+    if (props.answer === "correct" && props.count !== 10) {
         return (
             <div>
                 <Modal
@@ -37,24 +55,24 @@ const Popup = (props: PopupType) => {
                         </Typography>
                         <Box>
                             <Button
-                                    type="submit"
-                                    variant="contained"
-                                    color="neutral"
-                                    size="small"
-                                    fullWidth
-                                    onClick={() => {
-                                        props.addCount()
-                                        props.handleClose()
-                                    }}
-                                >
-                                    Next
+                                type="submit"
+                                variant="contained"
+                                color="neutral"
+                                size="small"
+                                fullWidth
+                                onClick={() => {
+                                    props.addCount()
+                                    props.handleClose()
+                                }}
+                            >
+                                Next
                             </Button>
                         </Box>
                     </Box>
                 </Modal>
             </div>
         );
-    } else if(props.answer === "correct" && props.count === 10){
+    } else if (props.answer === "correct" && props.count === 10) {
         return (
             <div>
                 <Modal
@@ -75,18 +93,17 @@ const Popup = (props: PopupType) => {
                                 size="small"
                                 fullWidth
                                 onClick={() => {
-                                    props.handleClose()
-                                    window.location.reload()
+                                    toLeaderboard(username)
                                 }}
                             >
-                                Try Again!
+                                View Leaderboard
                             </Button>
                         </Box>
                     </Box>
                 </Modal>
             </div>
         );
-    } if(props.answer === "incorrect"){
+    } if (props.answer === "incorrect") {
         return (
             <div>
                 <Modal
@@ -96,13 +113,23 @@ const Popup = (props: PopupType) => {
                         <Typography variant="h2" component="h2" align="center" sx={{ fontWeight: 500 }}>
                             Incorrect!
                         </Typography>
-                        <Box>
+                        <Box sx={{ display: "flex", justifyContent: "space-evenly"}}>
                             <Button
                                 type="submit"
                                 variant="contained"
                                 color="neutral"
                                 size="small"
-                                fullWidth
+                                onClick={() => {
+                                    toLeaderboard(username)
+                                }}
+                            >
+                                View Leaderboard
+                            </Button>
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                color="neutral"
+                                size="small"
                                 onClick={() => {
                                     props.handleClose()
                                     window.location.reload()

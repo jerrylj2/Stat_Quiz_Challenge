@@ -18,11 +18,25 @@ var con = mysql.createConnection({
 });
 
 let statDetails = "";
+let leaderboard;
 let count;
 let field;
 
-app.get("/api", (req, res) => {
+app.get("/statdetails", (req, res) => {
   res.json({ statDetails });
+});
+
+app.get("/leaderboard", (req, res) => {
+  con.connect(function(err) {
+    // if (err) throw err;
+    con.query("Call GetLeaderboard()", function (err, result, fields) {
+      if (err) throw err;
+      leaderboard = result[0];
+      console.log(leaderboard)
+    });
+  });
+
+  res.json({ leaderboard });
 });
 
 app.post("/parameters", function(req, res){

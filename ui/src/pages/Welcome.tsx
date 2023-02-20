@@ -59,7 +59,7 @@ const Welcome = () => {
         disabledWelcomeButton = false;
     };
     const navigate = useNavigate();
-    const sendUsername = (name: string) => {
+    const toSelection = (name: string) => {
         navigate({
             pathname: "/selection",
             search: createSearchParams({
@@ -103,7 +103,7 @@ const Welcome = () => {
                             color="neutral"
                             sx={{ mt: 3 }}
                             onClick={() => {
-                                sendUsername(username)
+                                toSelection(username)
                             }}
                             disabled={disabledWelcomeButton}
                         >
