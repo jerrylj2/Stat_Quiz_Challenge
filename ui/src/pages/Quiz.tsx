@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useReducer } from "react";
 import { useSearchParams } from 'react-router-dom';
 import "../StatApp.css";
 import Popup from "../components/Popup";
@@ -21,6 +21,94 @@ const theme = createTheme({
     },
 });
 
+interface Actions {
+    playerDetails: string,
+    color: string
+};
+
+const ACTIONS: Actions = {
+    playerDetails: "playerDetails",
+    color: "color"
+};
+
+interface Player {
+    stat: {
+        name: string,
+        full_name: string,
+    },
+    player1: {
+        name: string,
+        stat: number,
+        id: number,
+        color: string
+    },
+    player2: {
+        name: string,
+        stat: number,
+        id: number,
+        color: string
+    },
+    player3: {
+        name: string,
+        stat: number,
+        id: number,
+        color: string
+    },
+    player4: {
+        name: string,
+        stat: number,
+        id: number,
+        color: string
+    }
+};
+
+interface ReducerAction extends Player {
+    type: string,
+    color: {
+        player1: string,
+        player2: string,
+        player3: string,
+        player4: string
+    }
+};
+
+const reducer = (player: Player, action: ReducerAction) => {
+    switch (action.type) {
+        case ACTIONS.playerDetails:
+            return {
+                stat: action.stat,
+                player1: action.player1,
+                player2: action.player2,
+                player3: action.player3,
+                player4: action.player4
+            };
+
+        case ACTIONS.color:
+            return {
+                ...player,
+                player1: {
+                    ...player.player1,
+                    color: action.color.player1
+                },
+                player2: {
+                    ...player.player2,
+                    color: action.color.player2
+                },
+                player3: {
+                    ...player.player3,
+                    color: action.color.player3
+                },
+                player4: {
+                    ...player.player4,
+                    color: action.color.player4
+                }
+            };
+            
+        default:
+            return player;
+    };
+};
+
 const Quiz = () => {
     const [searchparams] = useSearchParams();
     const username: string = searchparams.get("username") as string;
@@ -30,130 +118,110 @@ const Quiz = () => {
     const correct_color: string = "#73e673";
     const wrong_color: string = "#f15757";
 
-    interface Player {
-        stat: {
-            name: string,
-            full_name: string,
-        },
-        player1: {
-            name: string,
-            stat: number,
-            id: number,
-            color: string
-        },
-        player2: {
-            name: string,
-            stat: number,
-            id: number,
-            color: string
-        },
-        player3: {
-            name: string,
-            stat: number,
-            id: number,
-            color: string
-        },
-        player4: {
-            name: string,
-            stat: number,
-            id: number,
-            color: string
+    const [player, dispatch] = useReducer(
+        reducer,
+        {
+            stat: {
+                name: "",
+                full_name: "",
+            },
+            player1: {
+                name: "",
+                stat: 0,
+                id: 0,
+                color: default_color
+            },
+            player2: {
+                name: "",
+                stat: 0,
+                id: 0,
+                color: default_color
+            },
+            player3: {
+                name: "",
+                stat: 0,
+                id: 0,
+                color: default_color
+            },
+            player4: {
+                name: "",
+                stat: 0,
+                id: 0,
+                color: default_color
+            }
         }
-    };
-
-    const [player, setPlayer] = useState<Player>({
-        stat: {
-            name: "",
-            full_name: "",
-        },
-        player1: {
-            name: "",
-            stat: 0,
-            id: 0,
-            color: default_color
-        },
-        player2: {
-            name: "",
-            stat: 0,
-            id: 0,
-            color: default_color
-        },
-        player3: {
-            name: "",
-            stat: 0,
-            id: 0,
-            color: default_color
-        },
-        player4: {
-            name: "",
-            stat: 0,
-            id: 0,
-            color: default_color
-        }
-    });
+    );
     const [count, setCount] = useState<number>(1);
     const [submission, setSubmission] = useState<number>();
     const [correctAnswer, setCorrectAnswer] = useState<number>();
     const [submissionCheck, setSubmissionCheck] = useState<string>("");
     const [selectedPlayer, setSelectedPlayer] = useState<number>(0);
     const [open, setOpen] = useState<boolean>(false);
-    const [statLink, setStatLink] = useState<string>("");
-    const [statAbbrv, setStatAbbrv] = useState<string>("");
-    const [statName, setStatName] = useState<string>("");
     const [startTime, setStartTime] = useState<number | undefined>();
     const [score, setScore] = useState<number>(0);
-    
-    const updateImageColor = (color1: string, color2: string, color3: string, color4: string): void => {
-        setPlayer(previousState => {
-            return {
-                ...previousState,
-                player1: {
-                    ...previousState.player1,
-                    color: color1
-                },
-                player2: {
-                    ...previousState.player2,
-                    color: color2
-                },
-                player3: {
-                    ...previousState.player3,
-                    color: color3
-                },
-                player4: {
-                    ...previousState.player4,
-                    color: color4
-                }
-            };
-        });
+
+    interface statDetailsType {
+        statLink: string,
+        statAbbrv: string,
+        statName: string
     };
 
-    const addCount = (): void => setCount(count + 1);
+    const [statDetails, setStatDetails] = useState<statDetailsType>({
+        statLink: "",
+        statAbbrv: "",
+        statName: ""
+    });
+
+    const getStatDetails = async () => {
+        const api = await fetch("/statdetails")
+        let data = await api.json()
+        setStatDetails({
+            statLink: data.statDetails.StatLink,
+            statAbbrv: data.statDetails.StatAbbrv,
+            statName: data.statDetails.StatName
+        })
+    };
+
+    const updateImageColor = (color1: string, color2: string, color3: string, color4: string): void => {
+        dispatch({ 
+            type: ACTIONS.color, 
+            ...player,
+            color: {
+                player1: color1,
+                player2: color2,
+                player3: color3,
+                player4: color4
+            }
+        })
+    };
+
+    const addCount = (): void => setCount(prevCount => { return prevCount + 1 });
     const updateSubmission = (stat: number): void => setSubmission(stat);
     const updateSelectedPlayer = (player: number): void => setSelectedPlayer(player);
     const handleOpen = (): void => setOpen(true);
     const handleClose = (): void => setOpen(false);
     let disabledQuizButton: boolean;
-    if(selectedPlayer === 0){
+    if (selectedPlayer === 0) {
         disabledQuizButton = true;
     } else {
         disabledQuizButton = false;
     };
 
     const tally = () => {
-        if(startTime !== undefined){
+        if (startTime !== undefined) {
             let timeSpent: number = (performance.now() - startTime) / 1000;
-            if(timeSpent < 10){
-                setScore(score + 100);
-            } else if(timeSpent < 20){
-                setScore(score + 75);
-            } else if(timeSpent < 20){
-                setScore(score + 50);
+            if (timeSpent < 10) {
+                setScore(prevScore => { return prevScore + 100 });
+            } else if (timeSpent < 20) {
+                setScore(prevScore => { return prevScore + 75 });
+            } else if (timeSpent < 30) {
+                setScore(prevScore => { return prevScore + 50 });
             } else {
-                setScore(score + 25);
+                setScore(prevScore => { return prevScore + 25 });
             };
         };
     };
-    
+
     const check = (selection: number | undefined, answer: number | undefined, player_num: number): void => {
         let colors: string[] = [];
         let stats: number[] = [player.player1.stat, player.player2.stat, player.player3.stat, player.player4.stat];
@@ -177,27 +245,23 @@ const Quiz = () => {
     };
 
     useEffect(() => {
-        let settings = { method: "Get" };
-
         // Post count and field to the server
         axios.post("/parameters", {
             count: count,
             field: field
         });
+    }, [count, field]);
 
-        // Gets stat details stored in DB
-        fetch("/statdetails")
-            .then((res) => res.json())
-            .then((data) => {
-                setStatLink(data.statDetails.StatLink)
-                setStatAbbrv(data.statDetails.StatAbbrv)
-                setStatName(data.statDetails.StatName)
-            });
+    useEffect(() => {
+        getStatDetails()
+    }, [count]);
 
-        fetch(statLink, settings)
+    useEffect(() => {
+        let settings = { method: "Get" };
+        fetch(statDetails.statLink, settings)
             .then(res => res.json())
             .then((json) => {
-                let stat_index: number = json.resultSet.headers.indexOf(statAbbrv);
+                let stat_index: number = json.resultSet.headers.indexOf(statDetails.statAbbrv);
                 let name_index: number = json.resultSet.headers.indexOf('PLAYER_NAME');
                 let id_index: number = json.resultSet.headers.indexOf('PLAYER_ID');
                 let rank: number = Math.floor(Math.random() * 97);
@@ -214,10 +278,11 @@ const Quiz = () => {
                 setCorrectAnswer(json.resultSet.rowSet[random_rank_arr[random_rank_arr.indexOf(rank)]][stat_index].toLocaleString('en-US'));
                 setSubmissionCheck("");
                 setSelectedPlayer(0);
-                setPlayer({
-                    stat: {
-                        name: statAbbrv,
-                        full_name: statName,
+                dispatch({ 
+                    type: ACTIONS.playerDetails, 
+                    stat: { 
+                        name: statDetails.statAbbrv, 
+                        full_name: statDetails.statName 
                     },
                     player1: {
                         name: json.resultSet.rowSet[random_rank_arr[0]][name_index],
@@ -242,29 +307,35 @@ const Quiz = () => {
                         stat: json.resultSet.rowSet[random_rank_arr[3]][stat_index].toLocaleString('en-US'),
                         id: json.resultSet.rowSet[random_rank_arr[3]][id_index],
                         color: default_color
+                    },
+                    color: {
+                        player1: player.player1.color,
+                        player2: player.player2.color,
+                        player3: player.player3.color,
+                        player4: player.player4.color
                     }
-                });
+                })
                 setStartTime(performance.now())
             });
-    }, [count, statAbbrv, statLink, statName]);
+    }, [statDetails]);
 
     return (
         <ThemeProvider theme={theme}>
-            <TopAppBar 
-                username={username} 
-                count={count + "/10"} 
+            <TopAppBar
+                username={username}
+                count={count + "/10"}
                 score={score}
                 showCount={true}
                 showScore={true}
             ></TopAppBar>
             <Container maxWidth="sm" component="main" >
-                <Box 
-                    sx={{ 
+                <Box
+                    sx={{
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        minHeight: "88vh", 
+                        minHeight: "88vh",
                     }}
                     mt={3}
                 >
@@ -275,13 +346,13 @@ const Quiz = () => {
                     </Box>
                     <Grid container spacing={2}>
                         <Grid xs={6}>
-                            <PlayerCard 
-                                players={player.player1} 
+                            <PlayerCard
+                                players={player.player1}
                                 player_num={1}
                                 default_color={default_color}
                                 active_color={active_color}
-                                updateImageColor={updateImageColor} 
-                                updateSubmission={updateSubmission} 
+                                updateImageColor={updateImageColor}
+                                updateSubmission={updateSubmission}
                                 updateSelectedPlayer={updateSelectedPlayer}
                                 selectedPlayer={selectedPlayer}
                                 open={open}
@@ -289,13 +360,13 @@ const Quiz = () => {
                             ></PlayerCard>
                         </Grid>
                         <Grid xs={6}>
-                            <PlayerCard 
-                                players={player.player2} 
+                            <PlayerCard
+                                players={player.player2}
                                 player_num={2}
                                 default_color={default_color}
                                 active_color={active_color}
-                                updateImageColor={updateImageColor} 
-                                updateSubmission={updateSubmission} 
+                                updateImageColor={updateImageColor}
+                                updateSubmission={updateSubmission}
                                 updateSelectedPlayer={updateSelectedPlayer}
                                 selectedPlayer={selectedPlayer}
                                 open={open}
@@ -303,13 +374,13 @@ const Quiz = () => {
                             ></PlayerCard>
                         </Grid>
                         <Grid xs={6}>
-                            <PlayerCard 
-                                players={player.player3} 
+                            <PlayerCard
+                                players={player.player3}
                                 player_num={3}
                                 default_color={default_color}
                                 active_color={active_color}
-                                updateImageColor={updateImageColor} 
-                                updateSubmission={updateSubmission} 
+                                updateImageColor={updateImageColor}
+                                updateSubmission={updateSubmission}
                                 updateSelectedPlayer={updateSelectedPlayer}
                                 selectedPlayer={selectedPlayer}
                                 open={open}
@@ -317,13 +388,13 @@ const Quiz = () => {
                             ></PlayerCard>
                         </Grid>
                         <Grid xs={6}>
-                            <PlayerCard 
-                                players={player.player4} 
+                            <PlayerCard
+                                players={player.player4}
                                 player_num={4}
                                 default_color={default_color}
                                 active_color={active_color}
-                                updateImageColor={updateImageColor} 
-                                updateSubmission={updateSubmission} 
+                                updateImageColor={updateImageColor}
+                                updateSubmission={updateSubmission}
                                 updateSelectedPlayer={updateSelectedPlayer}
                                 selectedPlayer={selectedPlayer}
                                 open={open}
@@ -331,11 +402,11 @@ const Quiz = () => {
                             ></PlayerCard>
                         </Grid>
                     </Grid>
-                    <Popup 
-                        handleClose={handleClose} 
-                        open={open} 
-                        answer={submissionCheck} 
-                        count={count} 
+                    <Popup
+                        handleClose={handleClose}
+                        open={open}
+                        answer={submissionCheck}
+                        count={count}
                         addCount={addCount}
                         tally={tally}
                         score={score}

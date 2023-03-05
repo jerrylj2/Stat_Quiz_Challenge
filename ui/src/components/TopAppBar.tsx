@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
+import { memo } from "react";
 
 interface AppBarUsername {
   username: string,
@@ -58,4 +59,4 @@ const TopAppBar = (props: AppBarUsername) => {
   );
 };
 
-export default TopAppBar;
+export default memo(TopAppBar);
