@@ -1,4 +1,4 @@
-import { useState, useEffect, useReducer } from "react";
+import { useState, useEffect, useReducer, createContext } from "react";
 import { useSearchParams } from 'react-router-dom';
 import "../StatApp.css";
 import Popup from "../components/Popup";
@@ -62,6 +62,13 @@ interface Player {
     }
 };
 
+interface PlayerSpecific {
+    name: string,
+    stat: number,
+    id: number,
+    color: string
+}
+
 interface ReducerAction extends Player {
     type: string,
     color: {
@@ -103,11 +110,34 @@ const reducer = (player: Player, action: ReducerAction) => {
                     color: action.color.player4
                 }
             };
-            
+
         default:
             return player;
     };
 };
+
+interface UserContextType {
+    open: boolean,
+    player_num: number,
+    selectedPlayer: number,
+    players: PlayerSpecific,
+    correctAnswer: number | undefined
+}
+
+const iUserContextState = {
+    open: false,
+    player_num: 0,
+    selectedPlayer: 0,
+    players: {
+        name: "",
+        stat: 0,
+        id: 0,
+        color: ""
+    },
+    correctAnswer: undefined
+}
+
+export const UserContext = createContext<UserContextType>(iUserContextState)
 
 const Quiz = () => {
     const [searchparams] = useSearchParams();
@@ -159,7 +189,7 @@ const Quiz = () => {
     const [open, setOpen] = useState<boolean>(false);
     const [startTime, setStartTime] = useState<number | undefined>();
     const [score, setScore] = useState<number>(0);
-
+    
     interface statDetailsType {
         statLink: string,
         statAbbrv: string,
@@ -183,8 +213,8 @@ const Quiz = () => {
     };
 
     const updateImageColor = (color1: string, color2: string, color3: string, color4: string): void => {
-        dispatch({ 
-            type: ACTIONS.color, 
+        dispatch({
+            type: ACTIONS.color,
             ...player,
             color: {
                 player1: color1,
@@ -249,12 +279,8 @@ const Quiz = () => {
         axios.post("/parameters", {
             count: count,
             field: field
-        });
+        }).then(() => getStatDetails())
     }, [count, field]);
-
-    useEffect(() => {
-        getStatDetails()
-    }, [count]);
 
     useEffect(() => {
         let settings = { method: "Get" };
@@ -278,11 +304,11 @@ const Quiz = () => {
                 setCorrectAnswer(json.resultSet.rowSet[random_rank_arr[random_rank_arr.indexOf(rank)]][stat_index].toLocaleString('en-US'));
                 setSubmissionCheck("");
                 setSelectedPlayer(0);
-                dispatch({ 
-                    type: ACTIONS.playerDetails, 
-                    stat: { 
-                        name: statDetails.statAbbrv, 
-                        full_name: statDetails.statName 
+                dispatch({
+                    type: ACTIONS.playerDetails,
+                    stat: {
+                        name: statDetails.statAbbrv,
+                        full_name: statDetails.statName
                     },
                     player1: {
                         name: json.resultSet.rowSet[random_rank_arr[0]][name_index],
@@ -317,7 +343,7 @@ const Quiz = () => {
                 })
                 setStartTime(performance.now())
             });
-    }, [statDetails]);
+    }, [statDetails.statAbbrv]);
 
     return (
         <ThemeProvider theme={theme}>
@@ -346,60 +372,80 @@ const Quiz = () => {
                     </Box>
                     <Grid container spacing={2}>
                         <Grid xs={6}>
-                            <PlayerCard
-                                players={player.player1}
-                                player_num={1}
-                                default_color={default_color}
-                                active_color={active_color}
-                                updateImageColor={updateImageColor}
-                                updateSubmission={updateSubmission}
-                                updateSelectedPlayer={updateSelectedPlayer}
-                                selectedPlayer={selectedPlayer}
-                                open={open}
-                                correctAnswer={correctAnswer}
-                            ></PlayerCard>
+                            <UserContext.Provider
+                                value={{
+                                    open,
+                                    player_num: 1,
+                                    selectedPlayer,
+                                    players: player.player1,
+                                    correctAnswer: correctAnswer
+                                }}
+                            >
+                                <PlayerCard
+                                    default_color={default_color}
+                                    active_color={active_color}
+                                    updateImageColor={updateImageColor}
+                                    updateSubmission={updateSubmission}
+                                    updateSelectedPlayer={updateSelectedPlayer}
+                                ></PlayerCard>
+                            </UserContext.Provider>
                         </Grid>
                         <Grid xs={6}>
-                            <PlayerCard
-                                players={player.player2}
-                                player_num={2}
-                                default_color={default_color}
-                                active_color={active_color}
-                                updateImageColor={updateImageColor}
-                                updateSubmission={updateSubmission}
-                                updateSelectedPlayer={updateSelectedPlayer}
-                                selectedPlayer={selectedPlayer}
-                                open={open}
-                                correctAnswer={correctAnswer}
-                            ></PlayerCard>
+                            <UserContext.Provider
+                                value={{
+                                    open,
+                                    player_num: 2,
+                                    selectedPlayer,
+                                    players: player.player2,
+                                    correctAnswer: correctAnswer
+                                }}
+                            >
+                                <PlayerCard
+                                    default_color={default_color}
+                                    active_color={active_color}
+                                    updateImageColor={updateImageColor}
+                                    updateSubmission={updateSubmission}
+                                    updateSelectedPlayer={updateSelectedPlayer}
+                                ></PlayerCard>
+                            </UserContext.Provider>
                         </Grid>
                         <Grid xs={6}>
-                            <PlayerCard
-                                players={player.player3}
-                                player_num={3}
-                                default_color={default_color}
-                                active_color={active_color}
-                                updateImageColor={updateImageColor}
-                                updateSubmission={updateSubmission}
-                                updateSelectedPlayer={updateSelectedPlayer}
-                                selectedPlayer={selectedPlayer}
-                                open={open}
-                                correctAnswer={correctAnswer}
-                            ></PlayerCard>
+                            <UserContext.Provider
+                                value={{
+                                    open,
+                                    player_num: 3,
+                                    selectedPlayer,
+                                    players: player.player3,
+                                    correctAnswer: correctAnswer
+                                }}
+                            >
+                                <PlayerCard
+                                    default_color={default_color}
+                                    active_color={active_color}
+                                    updateImageColor={updateImageColor}
+                                    updateSubmission={updateSubmission}
+                                    updateSelectedPlayer={updateSelectedPlayer}
+                                ></PlayerCard>
+                            </UserContext.Provider>
                         </Grid>
                         <Grid xs={6}>
-                            <PlayerCard
-                                players={player.player4}
-                                player_num={4}
-                                default_color={default_color}
-                                active_color={active_color}
-                                updateImageColor={updateImageColor}
-                                updateSubmission={updateSubmission}
-                                updateSelectedPlayer={updateSelectedPlayer}
-                                selectedPlayer={selectedPlayer}
-                                open={open}
-                                correctAnswer={correctAnswer}
-                            ></PlayerCard>
+                            <UserContext.Provider
+                                value={{
+                                    open,
+                                    player_num: 4,
+                                    selectedPlayer,
+                                    players: player.player4,
+                                    correctAnswer: correctAnswer
+                                }}
+                            >
+                                <PlayerCard
+                                    default_color={default_color}
+                                    active_color={active_color}
+                                    updateImageColor={updateImageColor}
+                                    updateSubmission={updateSubmission}
+                                    updateSelectedPlayer={updateSelectedPlayer}
+                                ></PlayerCard>
+                            </UserContext.Provider>
                         </Grid>
                     </Grid>
                     <Popup
