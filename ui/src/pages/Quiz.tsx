@@ -202,14 +202,21 @@ const Quiz = () => {
         statName: ""
     });
 
-    const getStatDetails = async () => {
-        const api = await fetch("/statdetails")
-        let data = await api.json()
-        setStatDetails({
-            statLink: data.statDetails.StatLink,
-            statAbbrv: data.statDetails.StatAbbrv,
-            statName: data.statDetails.StatName
-        })
+    const getStatDetails = () => {
+        const controller = new AbortController();
+        fetch("/statdetails", { signal: controller.signal })
+            .then(res => res.json())
+            .then((data) => {
+                setStatDetails({
+                    statLink: data.statDetails.StatLink,
+                    statAbbrv: data.statDetails.StatAbbrv,
+                    statName: data.statDetails.StatName
+                })
+            });
+            
+            return (() => {
+                controller.abort();
+            });
     };
 
     const updateImageColor = (color1: string, color2: string, color3: string, color4: string): void => {
@@ -283,8 +290,8 @@ const Quiz = () => {
     }, [count, field]);
 
     useEffect(() => {
-        let settings = { method: "Get" };
-        fetch(statDetails.statLink, settings)
+        const controller = new AbortController();
+        fetch(statDetails.statLink, { signal: controller.signal })
             .then(res => res.json())
             .then((json) => {
                 let stat_index: number = json.resultSet.headers.indexOf(statDetails.statAbbrv);
@@ -342,6 +349,10 @@ const Quiz = () => {
                     }
                 })
                 setStartTime(performance.now())
+            });
+            
+            return (() => {
+                controller.abort();
             });
     }, [statDetails.statAbbrv]);
 
