@@ -44,19 +44,30 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
+const StyledTableHeader = styled(TableHead)(({ }) => ({
+    'th: nth-child(1)': {
+        borderRadius: '50px 0 0 0',
+    },
+
+    'th: nth-child(3)': {
+        borderRadius: '0 50px 0 0',
+    },
+}));
+
 const Leaderboard = () => {
     interface leaderboard {
         Username: string,
         Score: number
     };
-    
-    const [testRows, setTestRows] = useState<leaderboard[]>([]);
+
+    const [rowData, setRowData] = useState<leaderboard[]>([{ Username: "", Score: 0 }]);
     const [searchparams] = useSearchParams();
     const username: string = searchparams.get("username") as string;
     const score: number = (searchparams.get("score") as unknown) as number;
     const field: string = searchparams.get("field") as string;
-    let rank: string = "23";
+    const [rank, setRank] = useState<string>("")
     let rank_length: number = rank.length;
+    let last_characters: string = "";
     let ordinal_rank: string = "";
     let rank_message: string = "";
     const navigate = useNavigate();
@@ -69,23 +80,29 @@ const Leaderboard = () => {
             }).toString()
         });
     };
-    
-    if (rank_length > 0) {
-        switch (rank.charAt(rank_length - 1)) {
-            case "1":
-                ordinal_rank = rank + "st";
-                break;
-            case "2":
-                ordinal_rank = rank + "nd";
-                break;
-            case "3":
-                ordinal_rank = rank + "rd";
-                break;
-            default:
-                ordinal_rank = rank + "th";
-        };
 
+    if (score > 0) {
+        last_characters = rank.substring(rank.length - 2);
+        if(last_characters === "11" || last_characters === "12" || last_characters === "13"){
+            ordinal_rank = rank + "th";
+        } else {
+            switch (rank.charAt(rank_length - 1)) {
+                case "1":
+                    ordinal_rank = rank + "st";
+                    break;
+                case "2":
+                    ordinal_rank = rank + "nd";
+                    break;
+                case "3":
+                    ordinal_rank = rank + "rd";
+                    break;
+                default:
+                    ordinal_rank = rank + "th";
+            };
+        };
         rank_message = "You ranked " + ordinal_rank + " with a score of " + score + "!";
+    } else {
+        rank_message = "";
     };
 
     useEffect(() => {
@@ -93,7 +110,10 @@ const Leaderboard = () => {
         fetch("/leaderboard")
             .then((res) => res.json())
             .then((data) => {
-                setTestRows(data.leaderboard)
+                if(data.leaderboard !== undefined){
+                    setRowData(data.leaderboard)
+                }
+                setRank(data.rank[0].Place + "")
             });
     }, []);
 
@@ -122,16 +142,14 @@ const Leaderboard = () => {
                         </Typography>
                     </Box>
                     <TableContainer sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <Table sx={{ maxWidth: 300 }} aria-label="customized table" component={Paper}>
-                            <TableHead>
-                                <TableRow>
-                                    <StyledTableCell align="center">Rank</StyledTableCell>
-                                    <StyledTableCell align="center">Username</StyledTableCell>
-                                    <StyledTableCell align="center">Score</StyledTableCell>
-                                </TableRow>
-                            </TableHead>
+                        <Table sx={{ maxWidth: 300, borderRadius: '50px' }} aria-label="customized table" component={Paper}>
+                            <StyledTableHeader>
+                                <StyledTableCell align="center">Rank</StyledTableCell>
+                                <StyledTableCell align="center">Username</StyledTableCell>
+                                <StyledTableCell align="center">Score</StyledTableCell>
+                            </StyledTableHeader>
                             <TableBody>
-                                {testRows.map((row, index) => (
+                                {rowData.map((row, index) => (
                                     <StyledTableRow >
                                         <StyledTableCell component="th" scope="row" align="center" sx={{fontWeight:900}}>
                                             {index + 1}

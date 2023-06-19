@@ -21,6 +21,9 @@ let statDetails = "";
 let leaderboard;
 let count;
 let field;
+let username;
+let score = 0;
+let rank;
 
 app.get("/statdetails", (req, res) => {
   res.json({ statDetails });
@@ -32,17 +35,20 @@ app.get("/leaderboard", (req, res) => {
     con.query("Call GetLeaderboard()", function (err, result, fields) {
       if (err) throw err;
       leaderboard = result[0];
-      console.log(leaderboard)
+    });
+
+    con.query("Call GetRanking('" + username + "', " + score + ")", function (err, result, fields) {
+      if (err) throw err;
+      rank = result[0];
     });
   });
 
-  res.json({ leaderboard });
+  res.json({ leaderboard, rank });
 });
 
-app.post("/parameters", function(req, res){
+app.post("/quizparameters", function(req, res){
   count = req.body.count;
   field = req.body.field;
-  console.log([count, field]);
   res.send("ok");
 
   con.connect(function(err) {
@@ -50,6 +56,19 @@ app.post("/parameters", function(req, res){
     con.query("Call GetStat('" + field + "', '" + count + "')", function (err, result, fields) {
       if (err) throw err;
       statDetails = result[0][0];
+    });
+  });
+});
+
+app.post("/leaderboardparameters", function(req, res){
+  username = req.body.username;
+  score = req.body.score;
+  res.send("ok");
+
+  con.connect(function(err) {
+    // if (err) throw err;
+    con.query("Call SaveScore('" + username + "', " + score + ")", function (err) {
+      if (err) throw err;
     });
   });
 });

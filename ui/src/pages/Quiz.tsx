@@ -268,9 +268,11 @@ const Quiz = () => {
                 setSubmissionCheck("correct");
                 tally();
                 colors.push(correct_color);
+                if(count === 10) saveScore();
             } else if ((i === player_num - 1) && (selection !== answer)) {
                 setSubmissionCheck("incorrect");
                 colors.push(wrong_color);
+                if(score !== 0) saveScore();
             } else if (stats[i] === answer) {
                 colors.push(correct_color);
             } else {
@@ -281,9 +283,17 @@ const Quiz = () => {
         updateImageColor(colors[0], colors[1], colors[2], colors[3]);
     };
 
+    // Post score to the server
+    const saveScore = () => {
+        axios.post("/leaderboardparameters", {
+            username: username,
+            score: score
+        })
+    }
+
     useEffect(() => {
         // Post count and field to the server
-        axios.post("/parameters", {
+        axios.post("/quizparameters", {
             count: count,
             field: field
         }).then(() => getStatDetails())
