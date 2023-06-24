@@ -52,8 +52,9 @@ const Copyright = (props: any) => {
 
 const Welcome = () => {
     const [username, setUsername] = useState<string>("");
+    const [usernameError, setUsernameError] = useState<string>("");
     let disabledWelcomeButton: boolean;
-    if(username.length < 2){
+    if (username.length < 2) {
         disabledWelcomeButton = true;
     } else {
         disabledWelcomeButton = false;
@@ -68,6 +69,15 @@ const Welcome = () => {
         });
     };
 
+    const usernameCheck = (value: string): void => {
+        if (!value.match(/[%.*:;+=#{}/,|()&`~?<>\\$'"]/)) {
+            setUsernameError("");
+            setUsername(value); 
+        } else {
+            setUsernameError("Invalid Character: " + value[value.length - 1]);
+        }
+    }
+
     return (
         <ThemeProvider theme={theme}>
             <Container component="main" maxWidth="sm">
@@ -81,7 +91,7 @@ const Welcome = () => {
                     }}
                 >
                     <Typography variant="h5" component="h1" align="center">
-                        Welcome to the Stat Quiz Challenge! 
+                        Welcome to the Stat Quiz Challenge!
                     </Typography>
                     <Box component="form" noValidate sx={{ mt: 1 }}>
                         <TextField
@@ -93,7 +103,10 @@ const Welcome = () => {
                             name="email"
                             value={username}
                             color="success"
-                            onChange={(e) => setUsername(e.target.value)}
+                            onChange={(e) => usernameCheck(e.target.value)}
+                            helperText={usernameError}
+                            error={!!usernameError}
+                            inputProps={{ maxLength: 13 }}
                             autoFocus
                         />
                         <Button
