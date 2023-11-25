@@ -191,15 +191,15 @@ const Quiz = () => {
     const [score, setScore] = useState<number>(0);
     
     interface statDetailsType {
-        statLink: string,
-        statAbbrv: string,
-        statName: string
+        statlink: string,
+        statabbrv: string,
+        statname: string
     };
 
     const [statDetails, setStatDetails] = useState<statDetailsType>({
-        statLink: "",
-        statAbbrv: "",
-        statName: ""
+        statlink: "",
+        statabbrv: "",
+        statname: ""
     });
 
     const getStatDetails = () => {
@@ -208,9 +208,9 @@ const Quiz = () => {
             .then(res => res.json())
             .then((data) => {
                 setStatDetails({
-                    statLink: data.statDetails.StatLink,
-                    statAbbrv: data.statDetails.StatAbbrv,
-                    statName: data.statDetails.StatName
+                    statlink: data.statDetails.statlink,
+                    statabbrv: data.statDetails.statabbrv,
+                    statname: data.statDetails.statname
                 })
             });
             
@@ -301,10 +301,10 @@ const Quiz = () => {
 
     useEffect(() => {
         const controller = new AbortController();
-        fetch(statDetails.statLink, { signal: controller.signal })
+        fetch(statDetails.statlink, { signal: controller.signal })
             .then(res => res.json())
             .then((json) => {
-                let stat_index: number = json.resultSet.headers.indexOf(statDetails.statAbbrv);
+                let stat_index: number = json.resultSet.headers.indexOf(statDetails.statabbrv);
                 let name_index: number = json.resultSet.headers.indexOf('PLAYER_NAME');
                 let id_index: number = json.resultSet.headers.indexOf('PLAYER_ID');
                 let rank: number = Math.floor(Math.random() * 97);
@@ -324,8 +324,8 @@ const Quiz = () => {
                 dispatch({
                     type: ACTIONS.playerDetails,
                     stat: {
-                        name: statDetails.statAbbrv,
-                        full_name: statDetails.statName
+                        name: statDetails.statabbrv,
+                        full_name: statDetails.statname
                     },
                     player1: {
                         name: json.resultSet.rowSet[random_rank_arr[0]][name_index],
@@ -364,7 +364,7 @@ const Quiz = () => {
             return (() => {
                 controller.abort();
             });
-    }, [statDetails.statAbbrv]);
+    }, [statDetails.statabbrv]);
 
     return (
         <ThemeProvider theme={theme}>

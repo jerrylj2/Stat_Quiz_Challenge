@@ -1,78 +1,90 @@
-const express = require("express");
-const cors = require("cors");
-
-const PORT = process.env.PORT || 3001;
+require('dotenv').config();
+const express = require('express');
+const bodyParser = require('body-parser');
+const { Pool } = require('pg');
 
 const app = express();
+const port = 3001;
 
-app.use(cors());
-app.use(express.json());
-
-var mysql = require('mysql');
-
-var con = mysql.createConnection({
-    host: '127.0.0.1',
-    user: "root",
-    password: "",
-    database: "statquizdb"
-});
+// Middleware to parse JSON and URL-encoded form data
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 let statDetails = "";
 let leaderboard;
-let count;
-let field;
 let username;
 let score = 0;
 let rank;
 
-app.get("/statdetails", (req, res) => {
-  res.json({ statDetails });
+const pool = new Pool({
+  host: process.env.PG_HOST,
+  port: process.env.PG_PORT,
+  user: process.env.PG_USER,
+  password: process.env.PG_PASSWORD,
+  database: process.env.PG_DATABASE,
 });
 
-app.get("/leaderboard", (req, res) => {
-  con.connect(function(err) {
-    // if (err) throw err;
-    con.query("Call GetLeaderboard()", function (err, result, fields) {
-      if (err) throw err;
-      leaderboard = result[0];
-    });
-
-    con.query("Call GetRanking('" + username + "', " + score + ")", function (err, result, fields) {
-      if (err) throw err;
-      rank = result[0];
-    });
-  });
-
-  res.json({ leaderboard, rank });
+// Gets the stat details
+app.get("/statdetails", async (req, res) => {
+  try {
+    res.json({ statDetails });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
 
-app.post("/quizparameters", function(req, res){
-  count = req.body.count;
-  field = req.body.field;
-  res.send("ok");
+// Gets the leaderboard details and the user's ranking
+app.get("/leaderboard", async (req, res) => {
+  try {
+    const client = await pool.connect();
+    const leaderboardResult = await client.query('Select * From GetLeaderboard()');
+    const rankResult = await client.query("Select * From GetRanking(" + score + ")");
+    
+    leaderboard = leaderboardResult.rows;
+    rank = rankResult.rows[0];
+    client.release();
 
-  con.connect(function(err) {
-    // if (err) throw err;
-    con.query("Call GetStat('" + field + "', '" + count + "')", function (err, result, fields) {
-      if (err) throw err;
-      statDetails = result[0][0];
-    });
-  });
+    res.json({ leaderboard, rank });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
 
-app.post("/leaderboardparameters", function(req, res){
-  username = req.body.username;
-  score = req.body.score;
-  res.send("ok");
+// Post the questions details based on the quiz type and question number
+app.post('/quizparameters', async (req, res) => {
+  try {
+    const data = req.body;
+    const client = await pool.connect();
+    const result = await client.query("Select * From GetStat('" + data.field + "', '" + data.count + "')");
+    client.release();
 
-  con.connect(function(err) {
-    // if (err) throw err;
-    con.query("Call SaveScore('" + username + "', " + score + ")", function (err) {
-      if (err) throw err;
-    });
-  });
+    statDetails = result.rows[0];
+
+    res.json({ success: true, message: 'Data posted successfully' });
+  } catch (error) {
+    console.error('Error with quiz parameters:', error);
+    res.status(500).json({ success: false, message: 'Internal Server Error' });
+  }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server listening on ${PORT}`);
+// Post the user's score to the database
+app.post("/leaderboardparameters", async (req, res) => {
+  try {
+    username = req.body.username;
+    score = req.body.score;
+    const client = await pool.connect();
+    await client.query("Select * From SaveScore('" + username + "', " + score + ")");
+    client.release();
+
+    res.json({ success: true, message: 'Data posted successfully' });
+  } catch (error) {
+    console.error('Error with leaderboard parameters:', error);
+    res.status(500).json({ success: false, message: 'Internal Server Error' });
+  }
+});
+
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });

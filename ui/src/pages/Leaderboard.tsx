@@ -56,11 +56,11 @@ const StyledTableHeader = styled(TableHead)(({ }) => ({
 
 const Leaderboard = () => {
     interface leaderboard {
-        Username: string,
-        Score: number
+        username: string,
+        score: number
     };
 
-    const [rowData, setRowData] = useState<leaderboard[]>([{ Username: "", Score: 0 }]);
+    const [rowData, setRowData] = useState<leaderboard[]>([{ username: "", score: 0 }]);
     const [searchparams] = useSearchParams();
     const username: string = searchparams.get("username") as string;
     const score: number = (searchparams.get("score") as unknown) as number;
@@ -113,7 +113,7 @@ const Leaderboard = () => {
                 if(data.leaderboard !== undefined){
                     setRowData(data.leaderboard)
                 }
-                setRank(data.rank[0].Place + "")
+                setRank(data.rank.place + "")
             });
     }, []);
 
@@ -154,8 +154,8 @@ const Leaderboard = () => {
                                         <StyledTableCell component="th" scope="row" align="center" sx={{fontWeight:900}}>
                                             {index + 1}
                                         </StyledTableCell>
-                                        <StyledTableCell align="center" sx={{fontWeight:900}}>{row.Username}</StyledTableCell>
-                                        <StyledTableCell align="center" sx={{fontWeight:900}}>{row.Score}</StyledTableCell>
+                                        <StyledTableCell align="center" sx={{fontWeight:900}}>{row.username}</StyledTableCell>
+                                        <StyledTableCell align="center" sx={{fontWeight:900}}>{row.score}</StyledTableCell>
                                     </StyledTableRow>
                                 ))}
                             </TableBody>
