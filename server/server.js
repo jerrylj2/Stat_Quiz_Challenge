@@ -4,7 +4,6 @@ const bodyParser = require('body-parser');
 const pg = require('pg');
 
 const app = express();
-const port = 3001;
 
 // Middleware to parse JSON and URL-encoded form data
 app.use(bodyParser.json());
@@ -82,6 +81,6 @@ app.post("/leaderboardparameters", async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+app.listen(process.env.PORT, () => {
+  console.log(`Server is running on port ${process.env.PORT}`);
 });
