@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
-const { Pool } = require('pg');
+const pg = require('pg');
 
 const app = express();
 const port = 3001;
@@ -16,13 +16,7 @@ let username;
 let score = 0;
 let rank;
 
-const pool = new Pool({
-  host: process.env.Host,
-  port: process.env.Port,
-  user: process.env.User,
-  password: process.env.Password,
-  database: process.env.Database,
-});
+const urlConnection = process.env.DATABASE_URL;
 
 // Gets the stat details
 app.get("/statdetails", async (req, res) => {
@@ -37,13 +31,14 @@ app.get("/statdetails", async (req, res) => {
 // Gets the leaderboard details and the user's ranking
 app.get("/leaderboard", async (req, res) => {
   try {
-    const client = await pool.connect();
+    const client = new pg.Client(urlConnection)
+    client.connect();
     const leaderboardResult = await client.query('Select * From GetLeaderboard()');
     const rankResult = await client.query("Select * From GetRanking(" + score + ")");
     
     leaderboard = leaderboardResult.rows;
     rank = rankResult.rows[0];
-    client.release();
+    client.end();
 
     res.json({ leaderboard, rank });
   } catch (err) {
@@ -56,9 +51,10 @@ app.get("/leaderboard", async (req, res) => {
 app.post('/quizparameters', async (req, res) => {
   try {
     const data = req.body;
-    const client = await pool.connect();
+    const client = new pg.Client(urlConnection)
+    client.connect();
     const result = await client.query("Select * From GetStat('" + data.field + "', '" + data.count + "')");
-    client.release();
+    client.end();
 
     statDetails = result.rows[0];
 
@@ -74,9 +70,10 @@ app.post("/leaderboardparameters", async (req, res) => {
   try {
     username = req.body.username;
     score = req.body.score;
-    const client = await pool.connect();
+    const client = new pg.Client(urlConnection)
+    client.connect();
     await client.query("Select * From SaveScore('" + username + "', " + score + ")");
-    client.release();
+    client.end();
 
     res.json({ success: true, message: 'Data posted successfully' });
   } catch (error) {
