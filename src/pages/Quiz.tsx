@@ -204,7 +204,7 @@ const Quiz = () => {
 
     const getStatDetails = () => {
         const controller = new AbortController();
-        fetch("/statdetails", { signal: controller.signal })
+        fetch(process.env.REACT_APP_API_URL + "/statdetails", { signal: controller.signal })
             .then(res => res.json())
             .then((data) => {
                 setStatDetails({
@@ -285,7 +285,7 @@ const Quiz = () => {
 
     // Post score to the server
     const saveScore = () => {
-        axios.post("/leaderboardparameters", {
+        axios.post(process.env.REACT_APP_API_URL + "/leaderboardparameters", {
             username: username,
             score: score
         })
@@ -293,7 +293,7 @@ const Quiz = () => {
 
     useEffect(() => {
         // Post count and field to the server
-        axios.post("/quizparameters", {
+        axios.post(process.env.REACT_APP_API_URL + "/quizparameters", {
             count: count,
             field: field
         }).then(() => getStatDetails())
