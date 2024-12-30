@@ -113,7 +113,9 @@ const Leaderboard = () => {
                 if(data.leaderboard !== undefined){
                     setRowData(data.leaderboard)
                 }
-                setRank(data.rank.place + "")
+                if(data.rank.place !== undefined) {
+                    setRank(data.rank.place + "")
+                }
             });
     }, []);
 

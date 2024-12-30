@@ -359,7 +359,12 @@ const Quiz = () => {
                     }
                 })
                 setStartTime(performance.now())
-            });
+            })
+            .catch((error) => {
+                if (error.name === "AbortError") {
+                    console.log(error.message);
+                  }
+            })
             
             return (() => {
                 controller.abort();
