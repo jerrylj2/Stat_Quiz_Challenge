@@ -8,6 +8,8 @@ interface PopupType {
     open: boolean,
     answer: string,
     count: number,
+    setCount: React.Dispatch<React.SetStateAction<number>>,
+    setFailedCount: React.Dispatch<React.SetStateAction<number>>,
     addCount(): void,
 };
 
@@ -76,7 +78,7 @@ const Popup = (props: PopupType) => {
                                 fullWidth
                                 onClick={() => {
                                     props.handleClose()
-                                    window.location.reload()
+                                    props.setCount(1)
                                 }}
                             >
                                 Try Again!
@@ -105,7 +107,9 @@ const Popup = (props: PopupType) => {
                                 fullWidth
                                 onClick={() => {
                                     props.handleClose()
-                                    window.location.reload()
+                                    props.count === 1 ? 
+                                        props.setFailedCount((prev) => prev + 1) : 
+                                        props.setCount(1)
                                 }}
                             >
                                 Try Again!

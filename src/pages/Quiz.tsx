@@ -95,6 +95,7 @@ const Quiz = () => {
     const [submissionCheck, setSubmissionCheck] = useState<string>("");
     const [selectedPlayer, setSelectedPlayer] = useState<number>(0);
     const [open, setOpen] = useState<boolean>(false);
+    const [failedCount, setFailedCount] = useState<number>(0);
     
     const updateImageColor = (color1: string, color2: string, color3: string, color4: string): void => {
         setPlayer(previousState => {
@@ -257,7 +258,7 @@ const Quiz = () => {
                     }
                 });
             });
-    }, [count]);
+    }, [count, failedCount]);
 
     return (
         <ThemeProvider theme={theme}>
@@ -341,6 +342,8 @@ const Quiz = () => {
                         open={open} 
                         answer={submissionCheck} 
                         count={count} 
+                        setCount={setCount}
+                        setFailedCount={setFailedCount}
                         addCount={addCount}
                     ></Popup>
                     <Typography variant="body2" color="text.secondary" align="center" mt={2} mb={5}>
