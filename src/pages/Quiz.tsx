@@ -189,6 +189,7 @@ const Quiz = () => {
     const [open, setOpen] = useState<boolean>(false);
     const [startTime, setStartTime] = useState<number | undefined>();
     const [score, setScore] = useState<number>(0);
+    const [failedCount, setFailedCount] = useState<number>(0);
     
     interface statDetailsType {
         statlink: string,
@@ -369,7 +370,7 @@ const Quiz = () => {
             return (() => {
                 controller.abort();
             });
-    }, [statDetails.statabbrv]);
+    }, [statDetails.statabbrv, failedCount]);
 
     return (
         <ThemeProvider theme={theme}>
@@ -479,6 +480,8 @@ const Quiz = () => {
                         open={open}
                         answer={submissionCheck}
                         count={count}
+                        setCount={setCount}
+                        setFailedCount={setFailedCount}
                         addCount={addCount}
                         tally={tally}
                         score={score}
