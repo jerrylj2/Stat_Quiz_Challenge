@@ -203,23 +203,6 @@ const Quiz = () => {
         statname: ""
     });
 
-    const getStatDetails = () => {
-        const controller = new AbortController();
-        fetch(process.env.REACT_APP_API_URL + "/statdetails", { signal: controller.signal })
-            .then(res => res.json())
-            .then((data) => {
-                setStatDetails({
-                    statlink: data.statDetails.statlink,
-                    statabbrv: data.statDetails.statabbrv,
-                    statname: data.statDetails.statname
-                })
-            });
-            
-            return (() => {
-                controller.abort();
-            });
-    };
-
     const updateImageColor = (color1: string, color2: string, color3: string, color4: string): void => {
         dispatch({
             type: ACTIONS.color,
@@ -294,10 +277,18 @@ const Quiz = () => {
 
     useEffect(() => {
         // Post count and field to the server
-        axios.post(process.env.REACT_APP_API_URL + "/quizparameters", {
-            count: count,
-            field: field
-        }).then(() => getStatDetails())
+        axios.get(process.env.REACT_APP_API_URL + "/statdetails", {
+            params: {
+                count: count,
+                field: field
+            }
+        }).then((result) => {
+            setStatDetails({
+                statlink: result.data.statlink,
+                statabbrv: result.data.statabbrv,
+                statname: result.data.statname
+            })
+        })
     }, [count, field]);
 
     useEffect(() => {
