@@ -485,6 +485,7 @@ const Quiz = () => {
                         addCount={addCount}
                         tally={tally}
                         score={score}
+                        setScore={setScore}
                         field={field}
                     ></Popup>
                     <Typography variant="body2" color="text.secondary" align="center" mt={2} mb={5}>

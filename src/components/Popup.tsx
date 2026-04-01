@@ -14,6 +14,7 @@ interface PopupType {
     addCount(): void,
     tally(): void,
     score: number,
+    setScore: React.Dispatch<React.SetStateAction<number>>,
     field: string
 };
 
@@ -134,6 +135,7 @@ const Popup = (props: PopupType) => {
                                 size="small"
                                 onClick={() => {
                                     props.handleClose()
+                                    props.setScore(0)
                                     props.count === 1 ? 
                                         props.setFailedCount((prev) => prev + 1) : 
                                         props.setCount(1)
