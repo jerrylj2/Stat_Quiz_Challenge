@@ -267,7 +267,6 @@ const Quiz = () => {
         updateImageColor(colors[0], colors[1], colors[2], colors[3]);
     };
 
-    // Post score to the server
     const saveScore = () => {
         axios.post(process.env.REACT_APP_API_URL + "/leaderboardparameters", {
             username: username,
@@ -276,7 +275,6 @@ const Quiz = () => {
     }
 
     useEffect(() => {
-        // Post count and field to the server
         axios.get(process.env.REACT_APP_API_URL + "/statdetails", {
             params: {
                 count: count,
