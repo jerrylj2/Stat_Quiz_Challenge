@@ -113,7 +113,7 @@ const Leaderboard = () => {
                 if(data.leaderboard !== undefined){
                     setRowData(data.leaderboard)
                 }
-                if(data.rank.place !== undefined) {
+                if(data.rank?.place !== undefined) {
                     setRank(data.rank.place + "")
                 }
             });
