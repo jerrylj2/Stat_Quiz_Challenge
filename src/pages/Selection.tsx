@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useSearchParams, createSearchParams, useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -39,11 +40,13 @@ declare module '@mui/material/Button' {
 const Selection = () => {
     const [searchparams] = useSearchParams();
     const navigate = useNavigate();
-    const sendUsername = (name: string) => {
+    const [field, setField] = useState<string>("NBA");
+    const toQuiz = (name: string) => {
         navigate({
             pathname: "/quiz",
             search: createSearchParams({
-                username: name
+                username: name,
+                field: field
             }).toString()
         });
     };
@@ -51,7 +54,13 @@ const Selection = () => {
 
     return (
         <ThemeProvider theme={theme}>
-            <TopAppBar username={username} count={""}></TopAppBar>
+            <TopAppBar 
+                username={username} 
+                count={""} 
+                score={0}
+                showCount={false}
+                showScore={false}
+            ></TopAppBar>
             <Container component="main" maxWidth="lg">
                 <Box 
                     sx={{
@@ -66,7 +75,12 @@ const Selection = () => {
                         Select the field(s) that you want to quiz on!
                     </Typography>
                     <FormGroup>
-                        <FormControlLabel control={<Checkbox checked={true} style={{color: "#ffad33"}} required />} label="NBA" />
+                        <FormControlLabel 
+                            control={
+                                <Checkbox checked={true} style={{color: "#ffad33"}} required />
+                            } 
+                            label="NBA" 
+                        />
                     </FormGroup>
                 </Box>
             </Container>
@@ -79,7 +93,7 @@ const Selection = () => {
                     sx={{ position: 'fixed', bottom: 0, left: 0, right: 0, borderRadius: 0 }}
                     size="large"
                     onClick={() => {
-                        sendUsername(username)
+                        toQuiz(username)
                     }}
                 >
                     Start Quiz!

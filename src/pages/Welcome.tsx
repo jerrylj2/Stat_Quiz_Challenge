@@ -52,14 +52,15 @@ const Copyright = (props: any) => {
 
 const Welcome = () => {
     const [username, setUsername] = useState<string>("");
+    const [usernameError, setUsernameError] = useState<string>("");
     let disabledWelcomeButton: boolean;
-    if(username.length < 2){
+    if (username.length < 2) {
         disabledWelcomeButton = true;
     } else {
         disabledWelcomeButton = false;
     };
     const navigate = useNavigate();
-    const sendUsername = (name: string) => {
+    const toSelection = (name: string) => {
         navigate({
             pathname: "/selection",
             search: createSearchParams({
@@ -67,6 +68,15 @@ const Welcome = () => {
             }).toString()
         });
     };
+
+    const usernameCheck = (value: string): void => {
+        if (!value.match(/[%.*:;+=#{}/,|()&`~?<>\\$'"]/)) {
+            setUsernameError("");
+            setUsername(value); 
+        } else {
+            setUsernameError("Invalid Character: " + value[value.length - 1]);
+        }
+    }
 
     return (
         <ThemeProvider theme={theme}>
@@ -93,7 +103,10 @@ const Welcome = () => {
                             name="email"
                             value={username}
                             color="success"
-                            onChange={(e) => setUsername(e.target.value)}
+                            onChange={(e) => usernameCheck(e.target.value)}
+                            helperText={usernameError}
+                            error={!!usernameError}
+                            inputProps={{ maxLength: 13 }}
                             autoFocus
                         />
                         <Button
@@ -103,7 +116,7 @@ const Welcome = () => {
                             color="neutral"
                             sx={{ mt: 3 }}
                             onClick={() => {
-                                sendUsername(username)
+                                toSelection(username)
                             }}
                             disabled={disabledWelcomeButton}
                         >
