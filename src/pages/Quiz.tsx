@@ -1,83 +1,83 @@
 import { useState, useEffect, useReducer, createContext } from "react";
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from "react-router-dom";
 import "../StatApp.css";
 import Popup from "../components/Popup";
 import TopAppBar from "../components/TopAppBar";
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
 import PlayerCard from "../components/PlayerCard";
-import Grid from '@mui/material/Unstable_Grid2';
-import Button from '@mui/material/Button';
-import axios from 'axios';
+import Grid from "@mui/material/Unstable_Grid2";
+import Button from "@mui/material/Button";
+import axios from "axios";
 
 const theme = createTheme({
     palette: {
         neutral: {
-            main: '#ffad33',
-            contrastText: '#000000',
+            main: "#ffad33",
+            contrastText: "#000000",
         },
     },
 });
 
 interface Actions {
-    playerDetails: string,
-    color: string
-};
+    playerDetails: string;
+    color: string;
+}
 
 const ACTIONS: Actions = {
     playerDetails: "playerDetails",
-    color: "color"
+    color: "color",
 };
 
 interface Player {
     stat: {
-        name: string,
-        full_name: string,
-    },
+        name: string;
+        full_name: string;
+    };
     player1: {
-        name: string,
-        stat: number,
-        id: number,
-        color: string
-    },
+        name: string;
+        stat: number;
+        id: number;
+        color: string;
+    };
     player2: {
-        name: string,
-        stat: number,
-        id: number,
-        color: string
-    },
+        name: string;
+        stat: number;
+        id: number;
+        color: string;
+    };
     player3: {
-        name: string,
-        stat: number,
-        id: number,
-        color: string
-    },
+        name: string;
+        stat: number;
+        id: number;
+        color: string;
+    };
     player4: {
-        name: string,
-        stat: number,
-        id: number,
-        color: string
-    }
-};
+        name: string;
+        stat: number;
+        id: number;
+        color: string;
+    };
+}
 
 interface PlayerSpecific {
-    name: string,
-    stat: number,
-    id: number,
-    color: string
+    name: string;
+    stat: number;
+    id: number;
+    color: string;
 }
 
 interface ReducerAction extends Player {
-    type: string,
+    type: string;
     color: {
-        player1: string,
-        player2: string,
-        player3: string,
-        player4: string
-    }
-};
+        player1: string;
+        player2: string;
+        player3: string;
+        player4: string;
+    };
+}
 
 const reducer = (player: Player, action: ReducerAction) => {
     switch (action.type) {
@@ -87,7 +87,7 @@ const reducer = (player: Player, action: ReducerAction) => {
                 player1: action.player1,
                 player2: action.player2,
                 player3: action.player3,
-                player4: action.player4
+                player4: action.player4,
             };
 
         case ACTIONS.color:
@@ -95,33 +95,33 @@ const reducer = (player: Player, action: ReducerAction) => {
                 ...player,
                 player1: {
                     ...player.player1,
-                    color: action.color.player1
+                    color: action.color.player1,
                 },
                 player2: {
                     ...player.player2,
-                    color: action.color.player2
+                    color: action.color.player2,
                 },
                 player3: {
                     ...player.player3,
-                    color: action.color.player3
+                    color: action.color.player3,
                 },
                 player4: {
                     ...player.player4,
-                    color: action.color.player4
-                }
+                    color: action.color.player4,
+                },
             };
 
         default:
             return player;
-    };
+    }
 };
 
 interface UserContextType {
-    open: boolean,
-    player_num: number,
-    selectedPlayer: number,
-    players: PlayerSpecific,
-    correctAnswer: number | undefined
+    open: boolean;
+    player_num: number;
+    selectedPlayer: number;
+    players: PlayerSpecific;
+    correctAnswer: number | undefined;
 }
 
 const iUserContextState = {
@@ -132,12 +132,12 @@ const iUserContextState = {
         name: "",
         stat: 0,
         id: 0,
-        color: ""
+        color: "",
     },
-    correctAnswer: undefined
-}
+    correctAnswer: undefined,
+};
 
-export const UserContext = createContext<UserContextType>(iUserContextState)
+export const UserContext = createContext<UserContextType>(iUserContextState);
 
 const Quiz = () => {
     const [searchparams] = useSearchParams();
@@ -148,39 +148,36 @@ const Quiz = () => {
     const correct_color: string = "#73e673";
     const wrong_color: string = "#f15757";
 
-    const [player, dispatch] = useReducer(
-        reducer,
-        {
-            stat: {
-                name: "",
-                full_name: "",
-            },
-            player1: {
-                name: "",
-                stat: 0,
-                id: 0,
-                color: default_color
-            },
-            player2: {
-                name: "",
-                stat: 0,
-                id: 0,
-                color: default_color
-            },
-            player3: {
-                name: "",
-                stat: 0,
-                id: 0,
-                color: default_color
-            },
-            player4: {
-                name: "",
-                stat: 0,
-                id: 0,
-                color: default_color
-            }
-        }
-    );
+    const [player, dispatch] = useReducer(reducer, {
+        stat: {
+            name: "",
+            full_name: "",
+        },
+        player1: {
+            name: "",
+            stat: 0,
+            id: 0,
+            color: default_color,
+        },
+        player2: {
+            name: "",
+            stat: 0,
+            id: 0,
+            color: default_color,
+        },
+        player3: {
+            name: "",
+            stat: 0,
+            id: 0,
+            color: default_color,
+        },
+        player4: {
+            name: "",
+            stat: 0,
+            id: 0,
+            color: default_color,
+        },
+    });
     const [count, setCount] = useState<number>(1);
     const [submission, setSubmission] = useState<number>();
     const [correctAnswer, setCorrectAnswer] = useState<number>();
@@ -191,20 +188,25 @@ const Quiz = () => {
     const [score, setScore] = useState<number>(0);
     const [failedCount, setFailedCount] = useState<number>(0);
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    
+
     interface statDetailsType {
-        statlink: string,
-        statabbrv: string,
-        statname: string
-    };
+        statlink: string;
+        statabbrv: string;
+        statname: string;
+    }
 
     const [statDetails, setStatDetails] = useState<statDetailsType>({
         statlink: "",
         statabbrv: "",
-        statname: ""
+        statname: "",
     });
 
-    const updateImageColor = (color1: string, color2: string, color3: string, color4: string): void => {
+    const updateImageColor = (
+        color1: string,
+        color2: string,
+        color3: string,
+        color4: string,
+    ): void => {
         dispatch({
             type: ACTIONS.color,
             ...player,
@@ -212,14 +214,18 @@ const Quiz = () => {
                 player1: color1,
                 player2: color2,
                 player3: color3,
-                player4: color4
-            }
-        })
+                player4: color4,
+            },
+        });
     };
 
-    const addCount = (): void => setCount(prevCount => { return prevCount + 1 });
+    const addCount = (): void =>
+        setCount((prevCount) => {
+            return prevCount + 1;
+        });
     const updateSubmission = (stat: number): void => setSubmission(stat);
-    const updateSelectedPlayer = (player: number): void => setSelectedPlayer(player);
+    const updateSelectedPlayer = (player: number): void =>
+        setSelectedPlayer(player);
     const handleOpen = (): void => setOpen(true);
     const handleClose = (): void => setOpen(false);
     let disabledQuizButton: boolean;
@@ -227,43 +233,60 @@ const Quiz = () => {
         disabledQuizButton = true;
     } else {
         disabledQuizButton = false;
-    };
+    }
 
     const tally = () => {
         if (startTime !== undefined) {
             let timeSpent: number = (performance.now() - startTime) / 1000;
             if (timeSpent < 10) {
-                setScore(prevScore => { return prevScore + 100 });
+                setScore((prevScore) => {
+                    return prevScore + 100;
+                });
             } else if (timeSpent < 20) {
-                setScore(prevScore => { return prevScore + 75 });
+                setScore((prevScore) => {
+                    return prevScore + 75;
+                });
             } else if (timeSpent < 30) {
-                setScore(prevScore => { return prevScore + 50 });
+                setScore((prevScore) => {
+                    return prevScore + 50;
+                });
             } else {
-                setScore(prevScore => { return prevScore + 25 });
-            };
-        };
+                setScore((prevScore) => {
+                    return prevScore + 25;
+                });
+            }
+        }
     };
 
-    const check = (selection: number | undefined, answer: number | undefined, player_num: number): void => {
+    const check = (
+        selection: number | undefined,
+        answer: number | undefined,
+        player_num: number,
+    ): void => {
         let colors: string[] = [];
-        let stats: number[] = [player.player1.stat, player.player2.stat, player.player3.stat, player.player4.stat];
+        let stats: number[] = [
+            player.player1.stat,
+            player.player2.stat,
+            player.player3.stat,
+            player.player4.stat,
+        ];
 
         for (let i = 0; i < 4; i++) {
-            if ((i === player_num - 1) && (selection === answer)) {
+            if (i === player_num - 1 && selection === answer) {
                 setSubmissionCheck("correct");
                 tally();
                 colors.push(correct_color);
-                if(count === 10) saveScore();
-            } else if ((i === player_num - 1) && (selection !== answer)) {
+                if (count === 10) saveScore();
+            } else if (i === player_num - 1 && selection !== answer) {
                 setSubmissionCheck("incorrect");
                 colors.push(wrong_color);
-                if(score !== 0) saveScore();
+                if (score !== 0) saveScore();
             } else if (stats[i] === answer) {
                 colors.push(correct_color);
             } else {
                 colors.push(default_color);
-            };
-        };
+            }
+        }
 
         updateImageColor(colors[0], colors[1], colors[2], colors[3]);
     };
@@ -271,97 +294,133 @@ const Quiz = () => {
     const saveScore = () => {
         axios.post(process.env.REACT_APP_API_URL + "/leaderboardparameters", {
             username: username,
-            score: score
-        })
-    }
+            score: score,
+        });
+    };
 
     useEffect(() => {
         setIsLoading(true);
-        axios.get(process.env.REACT_APP_API_URL + "/statdetails", {
-            params: {
-                count: count,
-                field: field
-            }
-        }).then((result) => {
-            setStatDetails({
-                statlink: result.data.statlink,
-                statabbrv: result.data.statabbrv,
-                statname: result.data.statname
+        axios
+            .get(process.env.REACT_APP_API_URL + "/statdetails", {
+                params: {
+                    count: count,
+                    field: field,
+                },
             })
-        })
+            .then((result) => {
+                setStatDetails({
+                    statlink: result.data.statlink,
+                    statabbrv: result.data.statabbrv,
+                    statname: result.data.statname,
+                });
+            });
     }, [count, field]);
 
     useEffect(() => {
         const controller = new AbortController();
         fetch(statDetails.statlink, { signal: controller.signal })
-            .then(res => res.json())
+            .then((res) => res.json())
             .then((json) => {
-                let stat_index: number = json.resultSet.headers.indexOf(statDetails.statabbrv);
-                let name_index: number = json.resultSet.headers.indexOf('PLAYER_NAME');
-                let id_index: number = json.resultSet.headers.indexOf('PLAYER_ID');
+                let stat_index: number = json.resultSet.headers.indexOf(
+                    statDetails.statabbrv,
+                );
+                let name_index: number =
+                    json.resultSet.headers.indexOf("PLAYER_NAME");
+                let id_index: number =
+                    json.resultSet.headers.indexOf("PLAYER_ID");
                 let rank: number = Math.floor(Math.random() * 97);
                 let rank_arr: number[] = [rank, rank + 1, rank + 2, rank + 3];
                 let random_rank_arr: number[] = [];
 
                 while (random_rank_arr.length <= 3) {
-                    let random_number: number = Math.floor(Math.random() * rank_arr.length);
-                    let removed_element: number = rank_arr.splice(random_number, 1)[0];
+                    let random_number: number = Math.floor(
+                        Math.random() * rank_arr.length,
+                    );
+                    let removed_element: number = rank_arr.splice(
+                        random_number,
+                        1,
+                    )[0];
                     random_rank_arr.push(removed_element);
-                };
+                }
 
-                updateImageColor(default_color, default_color, default_color, default_color);
-                setCorrectAnswer(json.resultSet.rowSet[random_rank_arr[random_rank_arr.indexOf(rank)]][stat_index].toLocaleString('en-US'));
+                updateImageColor(
+                    default_color,
+                    default_color,
+                    default_color,
+                    default_color,
+                );
+                setCorrectAnswer(
+                    json.resultSet.rowSet[
+                        random_rank_arr[random_rank_arr.indexOf(rank)]
+                    ][stat_index].toLocaleString("en-US"),
+                );
                 setSubmissionCheck("");
                 setSelectedPlayer(0);
                 dispatch({
                     type: ACTIONS.playerDetails,
                     stat: {
                         name: statDetails.statabbrv,
-                        full_name: statDetails.statname
+                        full_name: statDetails.statname,
                     },
                     player1: {
-                        name: json.resultSet.rowSet[random_rank_arr[0]][name_index],
-                        stat: json.resultSet.rowSet[random_rank_arr[0]][stat_index].toLocaleString('en-US'),
+                        name: json.resultSet.rowSet[random_rank_arr[0]][
+                            name_index
+                        ],
+                        stat: json.resultSet.rowSet[random_rank_arr[0]][
+                            stat_index
+                        ].toLocaleString("en-US"),
                         id: json.resultSet.rowSet[random_rank_arr[0]][id_index],
-                        color: default_color
+                        color: default_color,
                     },
                     player2: {
-                        name: json.resultSet.rowSet[random_rank_arr[1]][name_index],
-                        stat: json.resultSet.rowSet[random_rank_arr[1]][stat_index].toLocaleString('en-US'),
+                        name: json.resultSet.rowSet[random_rank_arr[1]][
+                            name_index
+                        ],
+                        stat: json.resultSet.rowSet[random_rank_arr[1]][
+                            stat_index
+                        ].toLocaleString("en-US"),
                         id: json.resultSet.rowSet[random_rank_arr[1]][id_index],
-                        color: default_color
+                        color: default_color,
                     },
                     player3: {
-                        name: json.resultSet.rowSet[random_rank_arr[2]][name_index],
-                        stat: json.resultSet.rowSet[random_rank_arr[2]][stat_index].toLocaleString('en-US'),
+                        name: json.resultSet.rowSet[random_rank_arr[2]][
+                            name_index
+                        ],
+                        stat: json.resultSet.rowSet[random_rank_arr[2]][
+                            stat_index
+                        ].toLocaleString("en-US"),
                         id: json.resultSet.rowSet[random_rank_arr[2]][id_index],
-                        color: default_color
+                        color: default_color,
                     },
                     player4: {
-                        name: json.resultSet.rowSet[random_rank_arr[3]][name_index],
-                        stat: json.resultSet.rowSet[random_rank_arr[3]][stat_index].toLocaleString('en-US'),
+                        name: json.resultSet.rowSet[random_rank_arr[3]][
+                            name_index
+                        ],
+                        stat: json.resultSet.rowSet[random_rank_arr[3]][
+                            stat_index
+                        ].toLocaleString("en-US"),
                         id: json.resultSet.rowSet[random_rank_arr[3]][id_index],
-                        color: default_color
+                        color: default_color,
                     },
                     color: {
                         player1: player.player1.color,
                         player2: player.player2.color,
                         player3: player.player3.color,
-                        player4: player.player4.color
-                    }
-                })
-                setStartTime(performance.now())
+                        player4: player.player4.color,
+                    },
+                });
+                setStartTime(performance.now());
                 setIsLoading(false);
             })
             .catch((error) => {
                 if (error.name === "AbortError") {
                     console.log(error.message);
-                  }
-            })
-            
-            return (() => {
-                controller.abort();
+                }
             });
+
+        return () => {
+            controller.abort();
+        };
     }, [statDetails.statabbrv, failedCount]);
 
     return (
@@ -373,20 +432,24 @@ const Quiz = () => {
                 showCount={true}
                 showScore={true}
             ></TopAppBar>
-            <Container maxWidth="sm" component="main" >
+            <Container maxWidth="sm" component="main">
                 <Box
                     sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
                         minHeight: "88vh",
                     }}
                     mt={3}
                 >
                     <Box>
                         <Typography variant="h6" component="h2" align="center">
-                            {isLoading ? "Loading..." : "Which NBA player has the most " + player.stat.full_name + " in their career?"}
+                            {isLoading
+                                ? "Loading..."
+                                : "Which NBA player has the most " +
+                                  player.stat.full_name +
+                                  " in their career?"}
                         </Typography>
                     </Box>
                     <Grid container spacing={2}>
@@ -397,7 +460,7 @@ const Quiz = () => {
                                     player_num: 1,
                                     selectedPlayer,
                                     players: player.player1,
-                                    correctAnswer: correctAnswer
+                                    correctAnswer: correctAnswer,
                                 }}
                             >
                                 <PlayerCard
@@ -417,7 +480,7 @@ const Quiz = () => {
                                     player_num: 2,
                                     selectedPlayer,
                                     players: player.player2,
-                                    correctAnswer: correctAnswer
+                                    correctAnswer: correctAnswer,
                                 }}
                             >
                                 <PlayerCard
@@ -437,7 +500,7 @@ const Quiz = () => {
                                     player_num: 3,
                                     selectedPlayer,
                                     players: player.player3,
-                                    correctAnswer: correctAnswer
+                                    correctAnswer: correctAnswer,
                                 }}
                             >
                                 <PlayerCard
@@ -457,7 +520,7 @@ const Quiz = () => {
                                     player_num: 4,
                                     selectedPlayer,
                                     players: player.player4,
-                                    correctAnswer: correctAnswer
+                                    correctAnswer: correctAnswer,
                                 }}
                             >
                                 <PlayerCard
@@ -484,7 +547,13 @@ const Quiz = () => {
                         setScore={setScore}
                         field={field}
                     ></Popup>
-                    <Typography variant="body2" color="text.secondary" align="center" mt={2} mb={5}>
+                    <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        align="center"
+                        mt={2}
+                        mb={5}
+                    >
                         * Names and data are from NBA.com
                     </Typography>
                 </Box>
@@ -495,11 +564,17 @@ const Quiz = () => {
                     fullWidth
                     variant="contained"
                     color="neutral"
-                    sx={{ position: 'fixed', bottom: 0, left: 0, right: 0, borderRadius: 0 }}
+                    sx={{
+                        position: "fixed",
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        borderRadius: 0,
+                    }}
                     size="large"
                     onClick={() => {
-                        check(submission, correctAnswer, selectedPlayer)
-                        handleOpen()
+                        check(submission, correctAnswer, selectedPlayer);
+                        handleOpen();
                     }}
                     disabled={disabledQuizButton}
                 >

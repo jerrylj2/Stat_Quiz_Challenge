@@ -1,47 +1,57 @@
 import { useState } from "react";
-import { createSearchParams, useNavigate } from 'react-router-dom';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import IconButton from '@mui/material/IconButton';
+import { createSearchParams, useNavigate } from "react-router-dom";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import IconButton from "@mui/material/IconButton";
 import { GitHub } from "@mui/icons-material";
 import { Link } from "@mui/material";
 
 const theme = createTheme({
     palette: {
         neutral: {
-            main: '#ffad33',
-            contrastText: '#000000',
+            main: "#ffad33",
+            contrastText: "#000000",
         },
     },
 });
 
-declare module '@mui/material/styles' {
+declare module "@mui/material/styles" {
     interface Palette {
-        neutral: Palette['primary'];
+        neutral: Palette["primary"];
     }
 
     // allow configuration using `createTheme`
     interface PaletteOptions {
-        neutral?: PaletteOptions['primary'];
+        neutral?: PaletteOptions["primary"];
     }
-};
+}
 
 // Update the Button's color prop options
-declare module '@mui/material/Button' {
+declare module "@mui/material/Button" {
     interface ButtonPropsColorOverrides {
         neutral: true;
     }
-};
+}
 
 const Copyright = (props: any) => {
     return (
-        <Typography variant="body2" color="text.secondary" align="center" {...props}>
+        <Typography
+            variant="body2"
+            color="text.secondary"
+            align="center"
+            {...props}
+        >
             © 2023 | designed & coded by Jerry Jackson
-            <Link href="https://github.com/jerrylj2" target="_blank" rel="noopener noreferrer" title="GitHub">
+            <Link
+                href="https://github.com/jerrylj2"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="GitHub"
+            >
                 <IconButton>
                     <GitHub />
                 </IconButton>
@@ -58,35 +68,35 @@ const Welcome = () => {
         disabledWelcomeButton = true;
     } else {
         disabledWelcomeButton = false;
-    };
+    }
     const navigate = useNavigate();
     const toSelection = (name: string) => {
         navigate({
             pathname: "/selection",
             search: createSearchParams({
-                username: name
-            }).toString()
+                username: name,
+            }).toString(),
         });
     };
 
     const usernameCheck = (value: string): void => {
         if (!value.match(/[%.*:;+=#{}/,|()&`~?<>\\$'"]/)) {
             setUsernameError("");
-            setUsername(value); 
+            setUsername(value);
         } else {
             setUsernameError("Invalid Character: " + value[value.length - 1]);
         }
-    }
+    };
 
     return (
         <ThemeProvider theme={theme}>
             <Container component="main" maxWidth="sm">
                 <Box
                     sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
                         minHeight: "100vh",
                     }}
                 >
@@ -116,7 +126,7 @@ const Welcome = () => {
                             color="neutral"
                             sx={{ mt: 3 }}
                             onClick={() => {
-                                toSelection(username)
+                                toSelection(username);
                             }}
                             disabled={disabledWelcomeButton}
                         >
