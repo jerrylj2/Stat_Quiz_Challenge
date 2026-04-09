@@ -190,6 +190,7 @@ const Quiz = () => {
     const [startTime, setStartTime] = useState<number | undefined>();
     const [score, setScore] = useState<number>(0);
     const [failedCount, setFailedCount] = useState<number>(0);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
     
     interface statDetailsType {
         statlink: string,
@@ -275,6 +276,7 @@ const Quiz = () => {
     }
 
     useEffect(() => {
+        setIsLoading(true);
         axios.get(process.env.REACT_APP_API_URL + "/statdetails", {
             params: {
                 count: count,
@@ -349,6 +351,7 @@ const Quiz = () => {
                     }
                 })
                 setStartTime(performance.now())
+                setIsLoading(false);
             })
             .catch((error) => {
                 if (error.name === "AbortError") {
@@ -383,7 +386,7 @@ const Quiz = () => {
                 >
                     <Box>
                         <Typography variant="h6" component="h2" align="center">
-                            {"Which NBA player has the most " + player.stat.full_name + " in their career?"}
+                            {isLoading ? "Loading..." : "Which NBA player has the most " + player.stat.full_name + " in their career?"}
                         </Typography>
                     </Box>
                     <Grid container spacing={2}>
@@ -403,6 +406,7 @@ const Quiz = () => {
                                     updateImageColor={updateImageColor}
                                     updateSubmission={updateSubmission}
                                     updateSelectedPlayer={updateSelectedPlayer}
+                                    isLoading={isLoading}
                                 ></PlayerCard>
                             </UserContext.Provider>
                         </Grid>
@@ -422,6 +426,7 @@ const Quiz = () => {
                                     updateImageColor={updateImageColor}
                                     updateSubmission={updateSubmission}
                                     updateSelectedPlayer={updateSelectedPlayer}
+                                    isLoading={isLoading}
                                 ></PlayerCard>
                             </UserContext.Provider>
                         </Grid>
@@ -441,6 +446,7 @@ const Quiz = () => {
                                     updateImageColor={updateImageColor}
                                     updateSubmission={updateSubmission}
                                     updateSelectedPlayer={updateSelectedPlayer}
+                                    isLoading={isLoading}
                                 ></PlayerCard>
                             </UserContext.Provider>
                         </Grid>
@@ -460,6 +466,7 @@ const Quiz = () => {
                                     updateImageColor={updateImageColor}
                                     updateSubmission={updateSubmission}
                                     updateSelectedPlayer={updateSelectedPlayer}
+                                    isLoading={isLoading}
                                 ></PlayerCard>
                             </UserContext.Provider>
                         </Grid>
