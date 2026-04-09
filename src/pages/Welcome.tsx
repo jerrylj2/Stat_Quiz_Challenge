@@ -37,29 +37,6 @@ declare module "@mui/material/Button" {
     }
 }
 
-const Copyright = (props: any) => {
-    return (
-        <Typography
-            variant="body2"
-            color="text.secondary"
-            align="center"
-            {...props}
-        >
-            © 2023 | designed & coded by Jerry Jackson
-            <Link
-                href="https://github.com/jerrylj2"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="GitHub"
-            >
-                <IconButton>
-                    <GitHub />
-                </IconButton>
-            </Link>
-        </Typography>
-    );
-};
-
 const Welcome = () => {
     const [username, setUsername] = useState<string>("");
     const [usernameError, setUsernameError] = useState<string>("");
@@ -133,7 +110,24 @@ const Welcome = () => {
                             Next
                         </Button>
                     </Box>
-                    <Copyright sx={{ mt: 8 }} />
+                    <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        align="center"
+                        sx={{ mt: 8 }}
+                    >
+                        Designed & coded by Jerry Jackson
+                        <Link
+                            href="https://github.com/jerrylj2"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title="GitHub"
+                        >
+                            <IconButton>
+                                <GitHub />
+                            </IconButton>
+                        </Link>
+                    </Typography>
                 </Box>
             </Container>
         </ThemeProvider>
