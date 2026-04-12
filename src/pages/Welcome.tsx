@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { createSearchParams, useNavigate } from "react-router-dom";
+import { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
@@ -9,6 +9,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
 import { GitHub } from "@mui/icons-material";
 import { Link } from "@mui/material";
+import GlobalContext from "../global/GlobalContext";
 
 const theme = createTheme({
     palette: {
@@ -38,8 +39,9 @@ declare module "@mui/material/Button" {
 }
 
 const Welcome = () => {
-    const [username, setUsername] = useState<string>("");
     const [usernameError, setUsernameError] = useState<string>("");
+    const { username, setUsername } = useContext(GlobalContext);
+
     let disabledWelcomeButton: boolean;
     if (username.length < 2) {
         disabledWelcomeButton = true;
@@ -47,15 +49,6 @@ const Welcome = () => {
         disabledWelcomeButton = false;
     }
     const navigate = useNavigate();
-    const toSelection = (name: string) => {
-        navigate({
-            pathname: "/selection",
-            search: createSearchParams({
-                username: name,
-            }).toString(),
-        });
-    };
-
     const usernameCheck = (value: string): void => {
         if (!value.match(/[%.*:;+=#{}/,|()&`~?<>\\$'"]/)) {
             setUsernameError("");
@@ -103,7 +96,7 @@ const Welcome = () => {
                             color="neutral"
                             sx={{ mt: 3 }}
                             onClick={() => {
-                                toSelection(username);
+                                navigate("/selection");
                             }}
                             disabled={disabledWelcomeButton}
                         >

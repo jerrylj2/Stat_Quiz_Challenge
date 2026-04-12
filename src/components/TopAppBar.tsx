@@ -4,7 +4,8 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Avatar from "@mui/material/Avatar";
-import { memo } from "react";
+import { memo, useContext } from "react";
+import GlobalContext from "../global/GlobalContext";
 
 interface AppBarUsername {
     username: string;
@@ -15,11 +16,12 @@ interface AppBarUsername {
 }
 
 const TopAppBar = (props: AppBarUsername) => {
-    let username: string;
-    if (props.username.length > 9) {
-        username = props.username.substring(0, 7) + "...";
+    const { username } = useContext(GlobalContext);
+    let usernameFormatted: string;
+    if (username.length > 9) {
+        usernameFormatted = username.substring(0, 7) + "...";
     } else {
-        username = props.username;
+        usernameFormatted = username;
     }
 
     let countColor: string = props.showCount ? "black" : "#ffad33";
@@ -56,7 +58,9 @@ const TopAppBar = (props: AppBarUsername) => {
                         <Avatar
                             sx={{ width: 80, height: 40, bgcolor: "black" }}
                         >
-                            <Typography variant="h6">{username}</Typography>
+                            <Typography variant="h6">
+                                {usernameFormatted}
+                            </Typography>
                         </Avatar>
                     </Badge>
                 </Toolbar>

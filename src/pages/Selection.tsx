@@ -1,9 +1,5 @@
-import { useState } from "react";
-import {
-    useSearchParams,
-    createSearchParams,
-    useNavigate,
-} from "react-router-dom";
+import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
@@ -13,6 +9,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import TopAppBar from "../components/TopAppBar";
 import "../StatApp.css";
+import GlobalContext from "../global/GlobalContext";
 
 const theme = createTheme({
     palette: {
@@ -42,19 +39,8 @@ declare module "@mui/material/Button" {
 }
 
 const Selection = () => {
-    const [searchparams] = useSearchParams();
+    const { username } = useContext(GlobalContext);
     const navigate = useNavigate();
-    const [field, setField] = useState<string>("NBA");
-    const toQuiz = (name: string) => {
-        navigate({
-            pathname: "/quiz",
-            search: createSearchParams({
-                username: name,
-                field: field,
-            }).toString(),
-        });
-    };
-    const username: string = searchparams.get("username") as string;
 
     return (
         <ThemeProvider theme={theme}>
@@ -107,7 +93,7 @@ const Selection = () => {
                     }}
                     size="large"
                     onClick={() => {
-                        toQuiz(username);
+                        navigate("/quiz");
                     }}
                 >
                     Start Quiz!

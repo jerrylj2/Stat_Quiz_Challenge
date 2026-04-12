@@ -11,13 +11,10 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Button } from "@mui/material";
-import {
-    useSearchParams,
-    createSearchParams,
-    useNavigate,
-} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import GlobalContext from "../global/GlobalContext";
 
 const theme = createTheme({
     palette: {
@@ -67,25 +64,15 @@ const Leaderboard = () => {
     const [rowData, setRowData] = useState<leaderboard[]>([
         { username: "", score: 0 },
     ]);
-    const [searchparams] = useSearchParams();
-    const username: string = searchparams.get("username") as string;
-    const score: number = searchparams.get("score") as unknown as number;
-    const field: string = searchparams.get("field") as string;
     const [rank, setRank] = useState<string>("");
+
+    const { username, score, setScore } = useContext(GlobalContext);
+
     let rank_length: number = rank.length;
     let last_characters: string = "";
     let ordinal_rank: string = "";
     let rank_message: string = "";
     const navigate = useNavigate();
-    const toQuiz = (name: string) => {
-        navigate({
-            pathname: "/quiz",
-            search: createSearchParams({
-                username: name,
-                field: field,
-            }).toString(),
-        });
-    };
 
     if (score > 0) {
         last_characters = rank.substring(rank.length - 2);
@@ -129,6 +116,11 @@ const Leaderboard = () => {
                 }
             });
     }, []);
+
+    if (username === "") {
+        navigate("/", { replace: true });
+        return <></>;
+    }
 
     return (
         <ThemeProvider theme={theme}>
@@ -223,7 +215,8 @@ const Leaderboard = () => {
                         }}
                         size="large"
                         onClick={() => {
-                            toQuiz(username);
+                            setScore(0);
+                            navigate("/quiz");
                         }}
                     >
                         Try Again!

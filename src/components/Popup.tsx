@@ -2,11 +2,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
-import {
-    useSearchParams,
-    createSearchParams,
-    useNavigate,
-} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 interface PopupType {
     handleClose(): void;
@@ -36,19 +32,7 @@ const style = {
 };
 
 const Popup = (props: PopupType) => {
-    const [searchparams] = useSearchParams();
     const navigate = useNavigate();
-    const toLeaderboard = (name: string) => {
-        navigate({
-            pathname: "/leaderboard",
-            search: createSearchParams({
-                username: name,
-                field: props.field,
-                score: props.score as unknown as string,
-            }).toString(),
-        });
-    };
-    const username: string = searchparams.get("username") as string;
 
     if (props.answer === "correct" && props.count !== 10) {
         return (
@@ -111,7 +95,7 @@ const Popup = (props: PopupType) => {
                                 size="small"
                                 fullWidth
                                 onClick={() => {
-                                    toLeaderboard(username);
+                                    navigate("/leaderboard");
                                 }}
                             >
                                 View Leaderboard
@@ -147,7 +131,7 @@ const Popup = (props: PopupType) => {
                                 color="neutral"
                                 size="small"
                                 onClick={() => {
-                                    toLeaderboard(username);
+                                    navigate("/leaderboard");
                                 }}
                             >
                                 View Leaderboard

@@ -1,5 +1,10 @@
-import { useState, useEffect, useReducer, createContext } from "react";
-import { useSearchParams } from "react-router-dom";
+import {
+    useState,
+    useEffect,
+    useReducer,
+    createContext,
+    useContext,
+} from "react";
 import "../StatApp.css";
 import Popup from "../components/Popup";
 import TopAppBar from "../components/TopAppBar";
@@ -11,6 +16,8 @@ import PlayerCard from "../components/PlayerCard";
 import Grid from "@mui/material/Unstable_Grid2";
 import Button from "@mui/material/Button";
 import axios from "axios";
+import GlobalContext from "../global/GlobalContext";
+import { useNavigate } from "react-router-dom";
 
 const theme = createTheme({
     palette: {
@@ -140,9 +147,9 @@ const iUserContextState = {
 export const UserContext = createContext<UserContextType>(iUserContextState);
 
 const Quiz = () => {
-    const [searchparams] = useSearchParams();
-    const username: string = searchparams.get("username") as string;
-    const field: string = searchparams.get("field") as string;
+    const { username, field, score, setScore } = useContext(GlobalContext);
+    const navigate = useNavigate();
+
     const default_color: string = "black";
     const active_color: string = "#8ccae4";
     const correct_color: string = "#73e673";
@@ -185,7 +192,6 @@ const Quiz = () => {
     const [selectedPlayer, setSelectedPlayer] = useState<number>(0);
     const [open, setOpen] = useState<boolean>(false);
     const [startTime, setStartTime] = useState<number | undefined>();
-    const [score, setScore] = useState<number>(0);
     const [failedCount, setFailedCount] = useState<number>(0);
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -422,6 +428,11 @@ const Quiz = () => {
             controller.abort();
         };
     }, [statDetails.statabbrv, failedCount]);
+
+    if (username === "") {
+        navigate("/", { replace: true });
+        return <></>;
+    }
 
     return (
         <ThemeProvider theme={theme}>
