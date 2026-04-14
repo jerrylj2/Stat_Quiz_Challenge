@@ -7,7 +7,6 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import TopAppBar from "../components/TopAppBar";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
@@ -15,15 +14,6 @@ import { useState, useEffect, useContext } from "react";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import GlobalContext from "../global/GlobalContext";
-
-const theme = createTheme({
-    palette: {
-        neutral: {
-            main: "#ffad33",
-            contrastText: "#000000",
-        },
-    },
-});
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -123,7 +113,7 @@ const Leaderboard = () => {
     }
 
     return (
-        <ThemeProvider theme={theme}>
+        <>
             <TopAppBar
                 username={username}
                 count={""}
@@ -223,7 +213,7 @@ const Leaderboard = () => {
                     </Button>
                 </Box>
             </Container>
-        </ThemeProvider>
+        </>
     );
 };
 

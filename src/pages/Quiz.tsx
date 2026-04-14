@@ -8,7 +8,6 @@ import {
 import "../StatApp.css";
 import Popup from "../components/Popup";
 import TopAppBar from "../components/TopAppBar";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
@@ -18,15 +17,6 @@ import Button from "@mui/material/Button";
 import axios from "axios";
 import GlobalContext from "../global/GlobalContext";
 import { useNavigate } from "react-router-dom";
-
-const theme = createTheme({
-    palette: {
-        neutral: {
-            main: "#ffad33",
-            contrastText: "#000000",
-        },
-    },
-});
 
 interface Actions {
     playerDetails: string;
@@ -435,7 +425,7 @@ const Quiz = () => {
     }
 
     return (
-        <ThemeProvider theme={theme}>
+        <>
             <TopAppBar
                 username={username}
                 count={count + "/10"}
@@ -592,7 +582,7 @@ const Quiz = () => {
                     Submit
                 </Button>
             </Box>
-        </ThemeProvider>
+        </>
     );
 };
 
