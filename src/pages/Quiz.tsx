@@ -17,6 +17,7 @@ import Button from "@mui/material/Button";
 import axios from "axios";
 import GlobalContext from "../global/GlobalContext";
 import { useNavigate } from "react-router-dom";
+import { cardColor } from "../global/consts/globalConst";
 
 interface Actions {
     playerDetails: string;
@@ -137,13 +138,19 @@ const iUserContextState = {
 export const UserContext = createContext<UserContextType>(iUserContextState);
 
 const Quiz = () => {
-    const { username, field, score, setScore } = useContext(GlobalContext);
+    const {
+        username,
+        field,
+        score,
+        setScore,
+        isLoading,
+        setIsLoading,
+        submission,
+        selectedPlayer,
+        setSelectedPlayer,
+        setCardColors,
+    } = useContext(GlobalContext);
     const navigate = useNavigate();
-
-    const default_color: string = "black";
-    const active_color: string = "#8ccae4";
-    const correct_color: string = "#73e673";
-    const wrong_color: string = "#f15757";
 
     const [player, dispatch] = useReducer(reducer, {
         stat: {
@@ -154,36 +161,33 @@ const Quiz = () => {
             name: "",
             stat: 0,
             id: 0,
-            color: default_color,
+            color: cardColor.default,
         },
         player2: {
             name: "",
             stat: 0,
             id: 0,
-            color: default_color,
+            color: cardColor.default,
         },
         player3: {
             name: "",
             stat: 0,
             id: 0,
-            color: default_color,
+            color: cardColor.default,
         },
         player4: {
             name: "",
             stat: 0,
             id: 0,
-            color: default_color,
+            color: cardColor.default,
         },
     });
     const [count, setCount] = useState<number>(1);
-    const [submission, setSubmission] = useState<number>();
     const [correctAnswer, setCorrectAnswer] = useState<number>();
     const [submissionCheck, setSubmissionCheck] = useState<string>("");
-    const [selectedPlayer, setSelectedPlayer] = useState<number>(0);
     const [open, setOpen] = useState<boolean>(false);
     const [startTime, setStartTime] = useState<number | undefined>();
     const [failedCount, setFailedCount] = useState<number>(0);
-    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     interface statDetailsType {
         statlink: string;
@@ -197,31 +201,10 @@ const Quiz = () => {
         statname: "",
     });
 
-    const updateImageColor = (
-        color1: string,
-        color2: string,
-        color3: string,
-        color4: string,
-    ): void => {
-        dispatch({
-            type: ACTIONS.color,
-            ...player,
-            color: {
-                player1: color1,
-                player2: color2,
-                player3: color3,
-                player4: color4,
-            },
-        });
-    };
-
     const addCount = (): void =>
         setCount((prevCount) => {
             return prevCount + 1;
         });
-    const updateSubmission = (stat: number): void => setSubmission(stat);
-    const updateSelectedPlayer = (player: number): void =>
-        setSelectedPlayer(player);
     const handleOpen = (): void => setOpen(true);
     const handleClose = (): void => setOpen(false);
     let disabledQuizButton: boolean;
@@ -271,20 +254,20 @@ const Quiz = () => {
             if (i === player_num - 1 && selection === answer) {
                 setSubmissionCheck("correct");
                 tally();
-                colors.push(correct_color);
+                colors.push(cardColor.correct);
                 if (count === 10) saveScore();
             } else if (i === player_num - 1 && selection !== answer) {
                 setSubmissionCheck("incorrect");
-                colors.push(wrong_color);
+                colors.push(cardColor.wrong);
                 if (score !== 0) saveScore();
             } else if (stats[i] === answer) {
-                colors.push(correct_color);
+                colors.push(cardColor.correct);
             } else {
-                colors.push(default_color);
+                colors.push(cardColor.default);
             }
         }
 
-        updateImageColor(colors[0], colors[1], colors[2], colors[3]);
+        setCardColors([colors[0], colors[1], colors[2], colors[3]]);
     };
 
     const saveScore = () => {
@@ -339,12 +322,12 @@ const Quiz = () => {
                     random_rank_arr.push(removed_element);
                 }
 
-                updateImageColor(
-                    default_color,
-                    default_color,
-                    default_color,
-                    default_color,
-                );
+                setCardColors([
+                    cardColor.default,
+                    cardColor.default,
+                    cardColor.default,
+                    cardColor.default,
+                ]);
                 setCorrectAnswer(
                     json.resultSet.rowSet[
                         random_rank_arr[random_rank_arr.indexOf(rank)]
@@ -366,7 +349,7 @@ const Quiz = () => {
                             stat_index
                         ].toLocaleString("en-US"),
                         id: json.resultSet.rowSet[random_rank_arr[0]][id_index],
-                        color: default_color,
+                        color: cardColor.default,
                     },
                     player2: {
                         name: json.resultSet.rowSet[random_rank_arr[1]][
@@ -376,7 +359,7 @@ const Quiz = () => {
                             stat_index
                         ].toLocaleString("en-US"),
                         id: json.resultSet.rowSet[random_rank_arr[1]][id_index],
-                        color: default_color,
+                        color: cardColor.default,
                     },
                     player3: {
                         name: json.resultSet.rowSet[random_rank_arr[2]][
@@ -386,7 +369,7 @@ const Quiz = () => {
                             stat_index
                         ].toLocaleString("en-US"),
                         id: json.resultSet.rowSet[random_rank_arr[2]][id_index],
-                        color: default_color,
+                        color: cardColor.default,
                     },
                     player4: {
                         name: json.resultSet.rowSet[random_rank_arr[3]][
@@ -396,7 +379,7 @@ const Quiz = () => {
                             stat_index
                         ].toLocaleString("en-US"),
                         id: json.resultSet.rowSet[random_rank_arr[3]][id_index],
-                        color: default_color,
+                        color: cardColor.default,
                     },
                     color: {
                         player1: player.player1.color,
@@ -454,86 +437,15 @@ const Quiz = () => {
                         </Typography>
                     </Box>
                     <Grid container spacing={2}>
-                        <Grid xs={6}>
-                            <UserContext.Provider
-                                value={{
-                                    open,
-                                    player_num: 1,
-                                    selectedPlayer,
-                                    players: player.player1,
-                                    correctAnswer: correctAnswer,
-                                }}
-                            >
+                        {[1, 2, 3, 4].map((playerNum) => (
+                            <Grid xs={6}>
                                 <PlayerCard
-                                    default_color={default_color}
-                                    active_color={active_color}
-                                    updateImageColor={updateImageColor}
-                                    updateSubmission={updateSubmission}
-                                    updateSelectedPlayer={updateSelectedPlayer}
-                                    isLoading={isLoading}
-                                ></PlayerCard>
-                            </UserContext.Provider>
-                        </Grid>
-                        <Grid xs={6}>
-                            <UserContext.Provider
-                                value={{
-                                    open,
-                                    player_num: 2,
-                                    selectedPlayer,
-                                    players: player.player2,
-                                    correctAnswer: correctAnswer,
-                                }}
-                            >
-                                <PlayerCard
-                                    default_color={default_color}
-                                    active_color={active_color}
-                                    updateImageColor={updateImageColor}
-                                    updateSubmission={updateSubmission}
-                                    updateSelectedPlayer={updateSelectedPlayer}
-                                    isLoading={isLoading}
-                                ></PlayerCard>
-                            </UserContext.Provider>
-                        </Grid>
-                        <Grid xs={6}>
-                            <UserContext.Provider
-                                value={{
-                                    open,
-                                    player_num: 3,
-                                    selectedPlayer,
-                                    players: player.player3,
-                                    correctAnswer: correctAnswer,
-                                }}
-                            >
-                                <PlayerCard
-                                    default_color={default_color}
-                                    active_color={active_color}
-                                    updateImageColor={updateImageColor}
-                                    updateSubmission={updateSubmission}
-                                    updateSelectedPlayer={updateSelectedPlayer}
-                                    isLoading={isLoading}
-                                ></PlayerCard>
-                            </UserContext.Provider>
-                        </Grid>
-                        <Grid xs={6}>
-                            <UserContext.Provider
-                                value={{
-                                    open,
-                                    player_num: 4,
-                                    selectedPlayer,
-                                    players: player.player4,
-                                    correctAnswer: correctAnswer,
-                                }}
-                            >
-                                <PlayerCard
-                                    default_color={default_color}
-                                    active_color={active_color}
-                                    updateImageColor={updateImageColor}
-                                    updateSubmission={updateSubmission}
-                                    updateSelectedPlayer={updateSelectedPlayer}
-                                    isLoading={isLoading}
-                                ></PlayerCard>
-                            </UserContext.Provider>
-                        </Grid>
+                                    playerNum={playerNum}
+                                    playerName=""
+                                    playerStat={0}
+                                />
+                            </Grid>
+                        ))}
                     </Grid>
                     <Popup
                         handleClose={handleClose}

@@ -8,31 +8,20 @@ import StatReveal from "./StatReveal";
 import Button from "@mui/material/Button";
 import { useContext } from "react";
 import { UserContext } from "../pages/Quiz";
+import { cardColor } from "../global/consts/globalConst";
+import GlobalContext from "../global/GlobalContext";
 
 interface PlayerDetails {
-    default_color: string;
-    active_color: string;
-    updateImageColor(
-        color1: string,
-        color2: string,
-        color3: string,
-        color4: string,
-    ): void;
-    updateSubmission(stat: number): void;
-    updateSelectedPlayer(player: number): void;
-    isLoading: boolean;
+    playerNum: number;
+    playerName: string;
+    playerStat: number;
 }
 
-const PlayerCard = (props: PlayerDetails) => {
-    const player = useContext(UserContext);
-    let colors: string[] = [
-        props.default_color,
-        props.default_color,
-        props.default_color,
-        props.default_color,
-    ];
+const PlayerCard = ({ playerNum, playerName, playerStat }: PlayerDetails) => {
+    const { isLoading, cardColors, setSubmission, setSelectedPlayer } =
+        useContext(GlobalContext);
     let shadow: string = "";
-    switch (player.player_num) {
+    switch (playerNum) {
         case 1:
             shadow = "-10px 10px 5px grey";
             break;
@@ -47,31 +36,35 @@ const PlayerCard = (props: PlayerDetails) => {
             break;
     }
 
+    const updateColors = (color: string) => {
+        const newColors: String[] = [];
+        cardColors.forEach((card, index: number) => {
+            if (index === playerNum - 1) {
+                newColors.push(color);
+            } else {
+                newColors.push(cardColor.default);
+            }
+        });
+        return newColors;
+    };
+
     return (
         <Card
             sx={{
                 maxWidth: 260,
-                backgroundColor: props.isLoading
-                    ? "none"
-                    : player.players.color,
+                backgroundColor: isLoading ? "none" : cardColors[playerNum - 1],
                 ":hover": {
-                    boxShadow: props.isLoading ? "none" : shadow,
+                    boxShadow: isLoading ? "none" : shadow,
                 },
             }}
             onClick={() => {
-                if (props.isLoading) return;
-                colors.splice(player.player_num - 1, 1, props.active_color);
-                props.updateImageColor(
-                    colors[0],
-                    colors[1],
-                    colors[2],
-                    colors[3],
-                );
-                props.updateSubmission(player.players.stat);
-                props.updateSelectedPlayer(player.player_num);
+                if (isLoading) return;
+                updateColors(cardColor.active);
+                setSubmission(playerStat);
+                setSelectedPlayer(playerNum);
             }}
         >
-            {props.isLoading ? (
+            {isLoading ? (
                 <Skeleton
                     variant="rectangular"
                     width={260}
@@ -97,23 +90,6 @@ const PlayerCard = (props: PlayerDetails) => {
                                 sx={{ height: 230 }}
                                 color="success"
                                 fullWidth
-                                onClick={() => {
-                                    colors.splice(
-                                        player.player_num - 1,
-                                        1,
-                                        props.active_color,
-                                    );
-                                    props.updateImageColor(
-                                        colors[0],
-                                        colors[1],
-                                        colors[2],
-                                        colors[3],
-                                    );
-                                    props.updateSubmission(player.players.stat);
-                                    props.updateSelectedPlayer(
-                                        player.player_num,
-                                    );
-                                }}
                             ></Button>
                             <StatReveal />
                         </Box>
@@ -131,7 +107,7 @@ const PlayerCard = (props: PlayerDetails) => {
                                 marginY={-2}
                                 align="center"
                             >
-                                {player.players.name}
+                                {playerName}
                             </Typography>
                         </CardContent>
                     </CardActionArea>
