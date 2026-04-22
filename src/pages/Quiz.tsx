@@ -1,11 +1,4 @@
-import {
-    useState,
-    useEffect,
-    useReducer,
-    createContext,
-    useContext,
-} from "react";
-import "../StatApp.css";
+import { useState, useEffect, useContext } from "react";
 import Popup from "../components/Popup";
 import TopAppBar from "../components/TopAppBar";
 import Box from "@mui/material/Box";
@@ -18,126 +11,27 @@ import axios from "axios";
 import GlobalContext from "../global/GlobalContext";
 import { useNavigate } from "react-router-dom";
 import { cardColor } from "../global/consts/globalConst";
+import { tally } from "../utils/tally";
+import { saveScore } from "../utils/saveScore";
 
-interface Actions {
-    playerDetails: string;
-    color: string;
+interface statDetailsType {
+    statlink: string;
+    statabbrv: string;
+    statname: string;
 }
-
-const ACTIONS: Actions = {
-    playerDetails: "playerDetails",
-    color: "color",
-};
-
-interface Player {
-    stat: {
-        name: string;
-        full_name: string;
-    };
-    player1: {
-        name: string;
-        stat: number;
-        id: number;
-        color: string;
-    };
-    player2: {
-        name: string;
-        stat: number;
-        id: number;
-        color: string;
-    };
-    player3: {
-        name: string;
-        stat: number;
-        id: number;
-        color: string;
-    };
-    player4: {
-        name: string;
-        stat: number;
-        id: number;
-        color: string;
-    };
-}
-
-interface PlayerSpecific {
-    name: string;
-    stat: number;
-    id: number;
-    color: string;
-}
-
-interface ReducerAction extends Player {
-    type: string;
-    color: {
-        player1: string;
-        player2: string;
-        player3: string;
-        player4: string;
-    };
-}
-
-const reducer = (player: Player, action: ReducerAction) => {
-    switch (action.type) {
-        case ACTIONS.playerDetails:
-            return {
-                stat: action.stat,
-                player1: action.player1,
-                player2: action.player2,
-                player3: action.player3,
-                player4: action.player4,
-            };
-
-        case ACTIONS.color:
-            return {
-                ...player,
-                player1: {
-                    ...player.player1,
-                    color: action.color.player1,
-                },
-                player2: {
-                    ...player.player2,
-                    color: action.color.player2,
-                },
-                player3: {
-                    ...player.player3,
-                    color: action.color.player3,
-                },
-                player4: {
-                    ...player.player4,
-                    color: action.color.player4,
-                },
-            };
-
-        default:
-            return player;
-    }
-};
-
-interface UserContextType {
-    open: boolean;
-    player_num: number;
-    selectedPlayer: number;
-    players: PlayerSpecific;
-    correctAnswer: number | undefined;
-}
-
-const iUserContextState = {
-    open: false,
-    player_num: 0,
-    selectedPlayer: 0,
-    players: {
-        name: "",
-        stat: 0,
-        id: 0,
-        color: "",
-    },
-    correctAnswer: undefined,
-};
-
-export const UserContext = createContext<UserContextType>(iUserContextState);
 
 const Quiz = () => {
+    const [startTime, setStartTime] = useState<number | undefined>();
+    const [quizData, setQuizData] = useState({
+        names: ["", "", "", ""],
+        stats: [0, 0, 0, 0],
+    });
+    const [statDetails, setStatDetails] = useState<statDetailsType>({
+        statlink: "",
+        statabbrv: "",
+        statname: "",
+    });
+
     const {
         username,
         field,
@@ -149,93 +43,15 @@ const Quiz = () => {
         selectedPlayer,
         setSelectedPlayer,
         setCardColors,
+        count,
+        setOpenAnswerPopup,
+        correctAnswer,
+        setCorrectAnswer,
+        setSubmissionCheck,
+        failedCount,
     } = useContext(GlobalContext);
+
     const navigate = useNavigate();
-
-    const [player, dispatch] = useReducer(reducer, {
-        stat: {
-            name: "",
-            full_name: "",
-        },
-        player1: {
-            name: "",
-            stat: 0,
-            id: 0,
-            color: cardColor.default,
-        },
-        player2: {
-            name: "",
-            stat: 0,
-            id: 0,
-            color: cardColor.default,
-        },
-        player3: {
-            name: "",
-            stat: 0,
-            id: 0,
-            color: cardColor.default,
-        },
-        player4: {
-            name: "",
-            stat: 0,
-            id: 0,
-            color: cardColor.default,
-        },
-    });
-    const [count, setCount] = useState<number>(1);
-    const [correctAnswer, setCorrectAnswer] = useState<number>();
-    const [submissionCheck, setSubmissionCheck] = useState<string>("");
-    const [open, setOpen] = useState<boolean>(false);
-    const [startTime, setStartTime] = useState<number | undefined>();
-    const [failedCount, setFailedCount] = useState<number>(0);
-
-    interface statDetailsType {
-        statlink: string;
-        statabbrv: string;
-        statname: string;
-    }
-
-    const [statDetails, setStatDetails] = useState<statDetailsType>({
-        statlink: "",
-        statabbrv: "",
-        statname: "",
-    });
-
-    const addCount = (): void =>
-        setCount((prevCount) => {
-            return prevCount + 1;
-        });
-    const handleOpen = (): void => setOpen(true);
-    const handleClose = (): void => setOpen(false);
-    let disabledQuizButton: boolean;
-    if (selectedPlayer === 0) {
-        disabledQuizButton = true;
-    } else {
-        disabledQuizButton = false;
-    }
-
-    const tally = () => {
-        if (startTime !== undefined) {
-            let timeSpent: number = (performance.now() - startTime) / 1000;
-            if (timeSpent < 10) {
-                setScore((prevScore) => {
-                    return prevScore + 100;
-                });
-            } else if (timeSpent < 20) {
-                setScore((prevScore) => {
-                    return prevScore + 75;
-                });
-            } else if (timeSpent < 30) {
-                setScore((prevScore) => {
-                    return prevScore + 50;
-                });
-            } else {
-                setScore((prevScore) => {
-                    return prevScore + 25;
-                });
-            }
-        }
-    };
 
     const check = (
         selection: number | undefined,
@@ -243,24 +59,18 @@ const Quiz = () => {
         player_num: number,
     ): void => {
         let colors: string[] = [];
-        let stats: number[] = [
-            player.player1.stat,
-            player.player2.stat,
-            player.player3.stat,
-            player.player4.stat,
-        ];
 
         for (let i = 0; i < 4; i++) {
             if (i === player_num - 1 && selection === answer) {
                 setSubmissionCheck("correct");
-                tally();
+                setScore(tally(score, startTime));
                 colors.push(cardColor.correct);
-                if (count === 10) saveScore();
+                if (count === 10) saveScore(username, score);
             } else if (i === player_num - 1 && selection !== answer) {
                 setSubmissionCheck("incorrect");
                 colors.push(cardColor.wrong);
-                if (score !== 0) saveScore();
-            } else if (stats[i] === answer) {
+                if (score !== 0) saveScore(username, score);
+            } else if (quizData.stats[i] === answer) {
                 colors.push(cardColor.correct);
             } else {
                 colors.push(cardColor.default);
@@ -268,13 +78,6 @@ const Quiz = () => {
         }
 
         setCardColors([colors[0], colors[1], colors[2], colors[3]]);
-    };
-
-    const saveScore = () => {
-        axios.post(process.env.REACT_APP_API_URL + "/leaderboardparameters", {
-            username: username,
-            score: score,
-        });
     };
 
     useEffect(() => {
@@ -305,8 +108,6 @@ const Quiz = () => {
                 );
                 let name_index: number =
                     json.resultSet.headers.indexOf("PLAYER_NAME");
-                let id_index: number =
-                    json.resultSet.headers.indexOf("PLAYER_ID");
                 let rank: number = Math.floor(Math.random() * 97);
                 let rank_arr: number[] = [rank, rank + 1, rank + 2, rank + 3];
                 let random_rank_arr: number[] = [];
@@ -322,6 +123,24 @@ const Quiz = () => {
                     random_rank_arr.push(removed_element);
                 }
 
+                const resultingNames = [];
+                const resultingStats = [];
+                for (let i = 0; i < 4; i++) {
+                    resultingNames.push(
+                        json.resultSet.rowSet[random_rank_arr[i]][name_index],
+                    );
+                    resultingStats.push(
+                        json.resultSet.rowSet[random_rank_arr[i]][
+                            stat_index
+                        ].toLocaleString("en-US"),
+                    );
+                }
+
+                setQuizData({
+                    names: resultingNames,
+                    stats: resultingStats,
+                });
+
                 setCardColors([
                     cardColor.default,
                     cardColor.default,
@@ -335,59 +154,7 @@ const Quiz = () => {
                 );
                 setSubmissionCheck("");
                 setSelectedPlayer(0);
-                dispatch({
-                    type: ACTIONS.playerDetails,
-                    stat: {
-                        name: statDetails.statabbrv,
-                        full_name: statDetails.statname,
-                    },
-                    player1: {
-                        name: json.resultSet.rowSet[random_rank_arr[0]][
-                            name_index
-                        ],
-                        stat: json.resultSet.rowSet[random_rank_arr[0]][
-                            stat_index
-                        ].toLocaleString("en-US"),
-                        id: json.resultSet.rowSet[random_rank_arr[0]][id_index],
-                        color: cardColor.default,
-                    },
-                    player2: {
-                        name: json.resultSet.rowSet[random_rank_arr[1]][
-                            name_index
-                        ],
-                        stat: json.resultSet.rowSet[random_rank_arr[1]][
-                            stat_index
-                        ].toLocaleString("en-US"),
-                        id: json.resultSet.rowSet[random_rank_arr[1]][id_index],
-                        color: cardColor.default,
-                    },
-                    player3: {
-                        name: json.resultSet.rowSet[random_rank_arr[2]][
-                            name_index
-                        ],
-                        stat: json.resultSet.rowSet[random_rank_arr[2]][
-                            stat_index
-                        ].toLocaleString("en-US"),
-                        id: json.resultSet.rowSet[random_rank_arr[2]][id_index],
-                        color: cardColor.default,
-                    },
-                    player4: {
-                        name: json.resultSet.rowSet[random_rank_arr[3]][
-                            name_index
-                        ],
-                        stat: json.resultSet.rowSet[random_rank_arr[3]][
-                            stat_index
-                        ].toLocaleString("en-US"),
-                        id: json.resultSet.rowSet[random_rank_arr[3]][id_index],
-                        color: cardColor.default,
-                    },
-                    color: {
-                        player1: player.player1.color,
-                        player2: player.player2.color,
-                        player3: player.player3.color,
-                        player4: player.player4.color,
-                    },
-                });
+
                 setStartTime(performance.now());
                 setIsLoading(false);
             })
@@ -432,7 +199,7 @@ const Quiz = () => {
                             {isLoading
                                 ? "Loading..."
                                 : "Which NBA player has the most " +
-                                  player.stat.full_name +
+                                  statDetails.statname +
                                   " in their career?"}
                         </Typography>
                     </Box>
@@ -447,19 +214,7 @@ const Quiz = () => {
                             </Grid>
                         ))}
                     </Grid>
-                    <Popup
-                        handleClose={handleClose}
-                        open={open}
-                        answer={submissionCheck}
-                        count={count}
-                        setCount={setCount}
-                        setFailedCount={setFailedCount}
-                        addCount={addCount}
-                        tally={tally}
-                        score={score}
-                        setScore={setScore}
-                        field={field}
-                    ></Popup>
+                    <Popup />
                     <Typography
                         variant="body2"
                         color="text.secondary"
@@ -487,9 +242,9 @@ const Quiz = () => {
                     size="large"
                     onClick={() => {
                         check(submission, correctAnswer, selectedPlayer);
-                        handleOpen();
+                        setOpenAnswerPopup(true);
                     }}
-                    disabled={disabledQuizButton}
+                    disabled={selectedPlayer === 0}
                 >
                     Submit
                 </Button>
