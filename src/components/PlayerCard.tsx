@@ -7,7 +7,6 @@ import Box from "@mui/material/Box";
 import StatReveal from "./StatReveal";
 import Button from "@mui/material/Button";
 import { useContext } from "react";
-import { UserContext } from "../pages/Quiz";
 import { cardColor } from "../global/consts/globalConst";
 import GlobalContext from "../global/GlobalContext";
 
@@ -91,7 +90,10 @@ const PlayerCard = ({ playerNum, playerName, playerStat }: PlayerDetails) => {
                                 color="success"
                                 fullWidth
                             ></Button>
-                            <StatReveal />
+                            <StatReveal
+                                playerNum={playerNum}
+                                playerStat={playerStat}
+                            />
                         </Box>
                         <CardContent
                             sx={{
