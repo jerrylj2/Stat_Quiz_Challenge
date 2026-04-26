@@ -14,8 +14,6 @@ type QuizContextType = {
     setCount: React.Dispatch<React.SetStateAction<number>>;
     openAnswerPopup: boolean;
     setOpenAnswerPopup: React.Dispatch<React.SetStateAction<boolean>>;
-    failedCount: number;
-    setFailedCount: React.Dispatch<React.SetStateAction<number>>;
     quizData: {
         names: string[];
         stats: number[];
@@ -46,7 +44,6 @@ export function QuizProvider({ children }: { children: React.ReactNode }) {
     const [selectedPlayer, setSelectedPlayer] = useState<number>(0);
     const [count, setCount] = useState<number>(1);
     const [openAnswerPopup, setOpenAnswerPopup] = useState<boolean>(false);
-    const [failedCount, setFailedCount] = useState<number>(0);
     const [quizData, setQuizData] = useState({
         names: ["", "", "", ""],
         stats: [0, 0, 0, 0],
@@ -68,8 +65,6 @@ export function QuizProvider({ children }: { children: React.ReactNode }) {
             setCount,
             openAnswerPopup,
             setOpenAnswerPopup,
-            failedCount,
-            setFailedCount,
             quizData,
             setQuizData,
         }),
@@ -80,7 +75,6 @@ export function QuizProvider({ children }: { children: React.ReactNode }) {
             selectedPlayer,
             count,
             openAnswerPopup,
-            failedCount,
             quizData,
         ],
     );

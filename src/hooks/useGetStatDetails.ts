@@ -14,8 +14,13 @@ const useGetStatDetails = (
     >,
 ) => {
     const { field } = useContext(GlobalContext);
-    const { count } = useContext(QuizContext);
+    const { count, setCount } = useContext(QuizContext);
     const handleGetStatDetails = async () => {
+        if (count === 0) {
+            setCount(1);
+            return;
+        }
+
         setIsLoading(true);
 
         try {

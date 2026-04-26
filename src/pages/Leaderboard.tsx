@@ -70,6 +70,7 @@ const Leaderboard = () => {
         setCount,
         setQuizData,
         setOpenAnswerPopup,
+        count,
     } = useContext(QuizContext);
 
     const navigate = useNavigate();
@@ -174,7 +175,7 @@ const Leaderboard = () => {
                             setCardColors(new Array(4).fill(cardColor.default));
                             setSubmission(0);
                             setSelectedPlayer(0);
-                            setCount(1);
+                            count === 1 ? setCount(0) : setCount(1);
                             setQuizData({
                                 names: ["", "", "", ""],
                                 stats: [0, 0, 0, 0],

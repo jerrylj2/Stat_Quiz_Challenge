@@ -12,7 +12,7 @@ const useGetPlayerDetails = (
         statname: string;
     },
 ) => {
-    const { setQuizData, setCardColors, setSelectedPlayer, failedCount } =
+    const { setQuizData, setCardColors, setSelectedPlayer } =
         useContext(QuizContext);
 
     const handleGetPlayerDetails = async () => {
@@ -78,7 +78,7 @@ const useGetPlayerDetails = (
 
     useEffect(() => {
         handleGetPlayerDetails();
-    }, [statDetails, failedCount]);
+    }, [statDetails]);
 };
 
 export default useGetPlayerDetails;

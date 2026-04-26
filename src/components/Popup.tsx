@@ -20,14 +20,8 @@ const style = {
 };
 
 const Popup = ({ submissionCheck }: { submissionCheck: string }) => {
-    const {
-        count,
-        setCount,
-        setScore,
-        openAnswerPopup,
-        setOpenAnswerPopup,
-        setFailedCount,
-    } = useContext(QuizContext);
+    const { count, setCount, setScore, openAnswerPopup, setOpenAnswerPopup } =
+        useContext(QuizContext);
 
     const navigate = useNavigate();
 
@@ -103,9 +97,7 @@ const Popup = ({ submissionCheck }: { submissionCheck: string }) => {
                                 onClick={() => {
                                     setOpenAnswerPopup(false);
                                     setScore(0);
-                                    count === 1
-                                        ? setFailedCount((prev) => prev + 1)
-                                        : setCount(1);
+                                    count === 1 ? setCount(0) : setCount(1);
                                 }}
                             >
                                 Try Again!
