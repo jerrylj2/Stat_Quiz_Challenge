@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import Popup from "../components/Popup";
 import TopAppBar from "../components/TopAppBar";
 import Box from "@mui/material/Box";
@@ -14,22 +14,28 @@ import { tally } from "../utils/tally";
 import { saveScore } from "../utils/saveScore";
 import useGetStatDetails from "../hooks/useGetStatDetails";
 import useGetPlayerDetails from "../hooks/useGetPlayerDetails";
+import QuizContext from "../global/QuizContext";
 
 const Quiz = () => {
+    const { username } = useContext(GlobalContext);
     const {
-        username,
         score,
         setScore,
-        isLoading,
         submission,
         selectedPlayer,
         setCardColors,
         count,
         setOpenAnswerPopup,
-        setSubmissionCheck,
         quizData,
-        statDetails,
-    } = useContext(GlobalContext);
+    } = useContext(QuizContext);
+
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [submissionCheck, setSubmissionCheck] = useState<string>("");
+    const [statDetails, setStatDetails] = useState({
+        statlink: "",
+        statabbrv: "",
+        statname: "",
+    });
 
     const navigate = useNavigate();
 
@@ -60,9 +66,9 @@ const Quiz = () => {
         setCardColors([colors[0], colors[1], colors[2], colors[3]]);
     };
 
-    useGetStatDetails();
+    useGetStatDetails(setIsLoading, setStatDetails);
 
-    useGetPlayerDetails();
+    useGetPlayerDetails(setIsLoading, setSubmissionCheck, statDetails);
 
     if (username === "") {
         navigate("/", { replace: true });
@@ -99,6 +105,7 @@ const Quiz = () => {
                                     playerNum={playerNum}
                                     playerName={quizData.names[playerNum - 1]}
                                     playerStat={quizData.stats[playerNum - 1]}
+                                    isLoading={isLoading}
                                 />
                             </Grid>
                         ))}
@@ -141,7 +148,7 @@ const Quiz = () => {
                     Submit
                 </Button>
             </Box>
-            <Popup />
+            <Popup submissionCheck={submissionCheck} />
         </>
     );
 };

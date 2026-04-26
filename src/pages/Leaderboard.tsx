@@ -17,6 +17,7 @@ import GlobalContext from "../global/GlobalContext";
 import useGetLeaderboard from "../hooks/useGetLeaderboard";
 import useGetRanking from "../hooks/useGetRanking";
 import { cardColor } from "../global/consts/globalConst";
+import QuizContext from "../global/QuizContext";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -60,8 +61,8 @@ const Leaderboard = () => {
     const [rank, setRank] = useState<string>("");
     const [rankingMessage, setRankingMessage] = useState<string>("");
 
+    const { username } = useContext(GlobalContext);
     const {
-        username,
         setScore,
         setCardColors,
         setSubmission,
@@ -69,7 +70,7 @@ const Leaderboard = () => {
         setCount,
         setQuizData,
         setOpenAnswerPopup,
-    } = useContext(GlobalContext);
+    } = useContext(QuizContext);
 
     const navigate = useNavigate();
 

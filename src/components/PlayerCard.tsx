@@ -8,22 +8,23 @@ import StatReveal from "./StatReveal";
 import Button from "@mui/material/Button";
 import { useContext } from "react";
 import { cardColor } from "../global/consts/globalConst";
-import GlobalContext from "../global/GlobalContext";
+import QuizContext from "../global/QuizContext";
 
 interface PlayerDetails {
     playerNum: number;
     playerName: string;
     playerStat: number;
+    isLoading: boolean;
 }
 
-const PlayerCard = ({ playerNum, playerName, playerStat }: PlayerDetails) => {
-    const {
-        isLoading,
-        cardColors,
-        setCardColors,
-        setSubmission,
-        setSelectedPlayer,
-    } = useContext(GlobalContext);
+const PlayerCard = ({
+    playerNum,
+    playerName,
+    playerStat,
+    isLoading,
+}: PlayerDetails) => {
+    const { cardColors, setCardColors, setSubmission, setSelectedPlayer } =
+        useContext(QuizContext);
 
     let shadow: string = "";
     switch (playerNum) {

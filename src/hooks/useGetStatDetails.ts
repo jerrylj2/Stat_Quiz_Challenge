@@ -1,12 +1,23 @@
 import { useContext, useEffect } from "react";
 import GlobalContext from "../global/GlobalContext";
 import { getStatDetails } from "../utils/getStatDetails";
+import QuizContext from "../global/QuizContext";
 
-const useGetStatDetails = () => {
-    const { count, field, setIsLoading, setStatDetails } =
-        useContext(GlobalContext);
+const useGetStatDetails = (
+    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
+    setStatDetails: React.Dispatch<
+        React.SetStateAction<{
+            statlink: string;
+            statabbrv: string;
+            statname: string;
+        }>
+    >,
+) => {
+    const { field } = useContext(GlobalContext);
+    const { count } = useContext(QuizContext);
     const handleGetStatDetails = async () => {
         setIsLoading(true);
+
         try {
             const response = await getStatDetails(count, field);
             setStatDetails({

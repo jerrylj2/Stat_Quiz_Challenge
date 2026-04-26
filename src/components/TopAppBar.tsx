@@ -6,6 +6,7 @@ import Typography from "@mui/material/Typography";
 import Avatar from "@mui/material/Avatar";
 import { useContext } from "react";
 import GlobalContext from "../global/GlobalContext";
+import QuizContext from "../global/QuizContext";
 
 interface AppBarProps {
     showCount: boolean;
@@ -13,7 +14,8 @@ interface AppBarProps {
 }
 
 const TopAppBar = ({ showCount, showScore }: AppBarProps) => {
-    const { username, count, score } = useContext(GlobalContext);
+    const { username } = useContext(GlobalContext);
+    const { count, score } = useContext(QuizContext);
     let usernameFormatted: string;
     if (username.length > 9) {
         usernameFormatted = username.substring(0, 7) + "...";

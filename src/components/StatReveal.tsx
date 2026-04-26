@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { useContext } from "react";
-import GlobalContext from "../global/GlobalContext";
+import QuizContext from "../global/QuizContext";
 
 interface StatRevealProps {
     playerStat: number;
@@ -17,7 +17,7 @@ const revealStyle = {
 
 const StatReveal = ({ playerStat, playerNum }: StatRevealProps) => {
     const { openAnswerPopup, quizData, selectedPlayer } =
-        useContext(GlobalContext);
+        useContext(QuizContext);
 
     if (!openAnswerPopup) return null;
 

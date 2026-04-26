@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
-import GlobalContext from "../global/GlobalContext";
+import QuizContext from "../global/QuizContext";
 
 const style = {
     position: "absolute" as "absolute",
@@ -19,16 +19,15 @@ const style = {
     p: 4,
 };
 
-const Popup = () => {
+const Popup = ({ submissionCheck }: { submissionCheck: string }) => {
     const {
         count,
         setCount,
         setScore,
         openAnswerPopup,
         setOpenAnswerPopup,
-        submissionCheck,
         setFailedCount,
-    } = useContext(GlobalContext);
+    } = useContext(QuizContext);
 
     const navigate = useNavigate();
 

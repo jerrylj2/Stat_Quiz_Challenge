@@ -1,11 +1,11 @@
-import GlobalContext from "../global/GlobalContext";
 import { useContext, useEffect } from "react";
+import QuizContext from "../global/QuizContext";
 
 const useGetRanking = (
     rank: string,
     setRankingMessage: (message: string) => void,
 ) => {
-    const { score } = useContext(GlobalContext);
+    const { score } = useContext(QuizContext);
 
     useEffect(() => {
         if (rank === "") return;

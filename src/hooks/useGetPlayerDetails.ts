@@ -1,20 +1,22 @@
 import axios from "axios";
-import GlobalContext from "../global/GlobalContext";
 import { useContext, useEffect } from "react";
 import { cardColor } from "../global/consts/globalConst";
+import QuizContext from "../global/QuizContext";
 
-const useGetPlayerDetails = () => {
-    const {
-        statDetails,
-        setQuizData,
-        setCardColors,
-        setSubmissionCheck,
-        setSelectedPlayer,
-        setIsLoading,
-        failedCount,
-    } = useContext(GlobalContext);
+const useGetPlayerDetails = (
+    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
+    setSubmissionCheck: React.Dispatch<React.SetStateAction<string>>,
+    statDetails: {
+        statlink: string;
+        statabbrv: string;
+        statname: string;
+    },
+) => {
+    const { setQuizData, setCardColors, setSelectedPlayer, failedCount } =
+        useContext(QuizContext);
 
     const handleGetPlayerDetails = async () => {
+        if (statDetails.statlink === "") return;
         try {
             const response = await axios.get(statDetails.statlink);
             const resultSet = response.data.resultSet;
@@ -76,7 +78,7 @@ const useGetPlayerDetails = () => {
 
     useEffect(() => {
         handleGetPlayerDetails();
-    }, [statDetails.statabbrv, failedCount]);
+    }, [statDetails, failedCount]);
 };
 
 export default useGetPlayerDetails;
