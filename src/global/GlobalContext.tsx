@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useMemo, useState } from "react";
 import { cardColor } from "./consts/globalConst";
 
 type GlobalContextType = {
@@ -83,37 +83,54 @@ export function GlobalProvider({ children }: { children: React.ReactNode }) {
         statname: "",
     });
 
+    const value = useMemo(
+        () => ({
+            username,
+            setUsername,
+            field,
+            setField,
+            score,
+            setScore,
+            isLoading,
+            setIsLoading,
+            cardColors,
+            setCardColors,
+            submission,
+            setSubmission,
+            selectedPlayer,
+            setSelectedPlayer,
+            count,
+            setCount,
+            openAnswerPopup,
+            setOpenAnswerPopup,
+            submissionCheck,
+            setSubmissionCheck,
+            failedCount,
+            setFailedCount,
+            quizData,
+            setQuizData,
+            statDetails,
+            setStatDetails,
+        }),
+        [
+            username,
+            field,
+            score,
+            isLoading,
+            cardColors,
+            submission,
+            selectedPlayer,
+            count,
+            openAnswerPopup,
+            submissionCheck,
+            failedCount,
+            quizData,
+            statDetails,
+        ],
+    );
+
     return (
-        <GlobalContext.Provider
-            value={{
-                username,
-                setUsername,
-                field,
-                setField,
-                score,
-                setScore,
-                isLoading,
-                setIsLoading,
-                cardColors,
-                setCardColors,
-                submission,
-                setSubmission,
-                selectedPlayer,
-                setSelectedPlayer,
-                count,
-                setCount,
-                openAnswerPopup,
-                setOpenAnswerPopup,
-                submissionCheck,
-                setSubmissionCheck,
-                failedCount,
-                setFailedCount,
-                quizData,
-                setQuizData,
-                statDetails,
-                setStatDetails,
-            }}
-        >
+        <GlobalContext.Provider value={value}>
             {children}
         </GlobalContext.Provider>
     );
