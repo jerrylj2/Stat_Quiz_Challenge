@@ -10,10 +10,12 @@ import TopAppBar from "../components/TopAppBar";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
-import { useState, useEffect, useContext } from "react";
+import { useState, useContext } from "react";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import GlobalContext from "../global/GlobalContext";
+import useGetLeaderboard from "../hooks/useGetLeaderboard";
+import useGetRanking from "../hooks/useGetRanking";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -35,7 +37,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
-const StyledTableHeader = styled(TableHead)(({}) => ({
+const StyledTableHeader = styled(TableHead)(() => ({
     "th: nth-child(1)": {
         borderRadius: "50px 0 0 0",
     },
@@ -57,58 +59,13 @@ const Leaderboard = () => {
     const [rank, setRank] = useState<string>("");
     const [rankingMessage, setRankingMessage] = useState<string>("");
 
-    const { username, score, setScore } = useContext(GlobalContext);
+    const { username, setScore } = useContext(GlobalContext);
 
     const navigate = useNavigate();
 
-    useEffect(() => {
-        fetch(process.env.REACT_APP_API_URL + "/leaderboard")
-            .then((res) => res.json())
-            .then((data) => {
-                if (data.leaderboard !== undefined) {
-                    setRowData(data.leaderboard);
-                }
-                if (data.rank?.place !== undefined) {
-                    setRank(data.rank.place + "");
-                }
-            });
-    }, []);
+    useGetLeaderboard(setRowData, setRank);
 
-    useEffect(() => {
-        if (rank === "") return;
-        let ordinal_rank: string = "";
-        let rank_message: string = "";
-
-        if (score > 0) {
-            if (["11", "12", "13"].includes(rank.substring(rank.length - 2))) {
-                ordinal_rank = rank + "th";
-            } else {
-                switch (rank.charAt(rank.length - 1)) {
-                    case "1":
-                        ordinal_rank = rank + "st";
-                        break;
-                    case "2":
-                        ordinal_rank = rank + "nd";
-                        break;
-                    case "3":
-                        ordinal_rank = rank + "rd";
-                        break;
-                    default:
-                        ordinal_rank = rank + "th";
-                }
-            }
-            rank_message =
-                "You ranked " +
-                ordinal_rank +
-                " with a score of " +
-                score +
-                "!";
-        } else {
-            rank_message = "";
-        }
-
-        setRankingMessage(rank_message);
-    }, [rank]);
+    useGetRanking(rank, setRankingMessage);
 
     if (username === "") {
         navigate("/", { replace: true });

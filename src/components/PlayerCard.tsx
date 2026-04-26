@@ -19,6 +19,7 @@ interface PlayerDetails {
 const PlayerCard = ({ playerNum, playerName, playerStat }: PlayerDetails) => {
     const { isLoading, cardColors, setSubmission, setSelectedPlayer } =
         useContext(GlobalContext);
+
     let shadow: string = "";
     switch (playerNum) {
         case 1:

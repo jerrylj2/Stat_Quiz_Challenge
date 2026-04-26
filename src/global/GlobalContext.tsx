@@ -20,12 +20,36 @@ type GlobalContextType = {
     setCount: React.Dispatch<React.SetStateAction<number>>;
     openAnswerPopup: boolean;
     setOpenAnswerPopup: React.Dispatch<React.SetStateAction<boolean>>;
-    correctAnswer: number | undefined;
-    setCorrectAnswer: React.Dispatch<React.SetStateAction<number | undefined>>;
     submissionCheck: string;
     setSubmissionCheck: React.Dispatch<React.SetStateAction<string>>;
     failedCount: number;
     setFailedCount: React.Dispatch<React.SetStateAction<number>>;
+    quizData: {
+        names: string[];
+        stats: number[];
+        startTime: number;
+        correctAnswer: number;
+    };
+    setQuizData: React.Dispatch<
+        React.SetStateAction<{
+            names: string[];
+            stats: number[];
+            startTime: number;
+            correctAnswer: number;
+        }>
+    >;
+    statDetails: {
+        statlink: string;
+        statabbrv: string;
+        statname: string;
+    };
+    setStatDetails: React.Dispatch<
+        React.SetStateAction<{
+            statlink: string;
+            statabbrv: string;
+            statname: string;
+        }>
+    >;
 };
 
 const GlobalContext = createContext<GlobalContextType>({} as GlobalContextType);
@@ -45,9 +69,19 @@ export function GlobalProvider({ children }: { children: React.ReactNode }) {
     const [selectedPlayer, setSelectedPlayer] = useState<number>(0);
     const [count, setCount] = useState<number>(1);
     const [openAnswerPopup, setOpenAnswerPopup] = useState<boolean>(false);
-    const [correctAnswer, setCorrectAnswer] = useState<number>();
     const [submissionCheck, setSubmissionCheck] = useState<string>("");
     const [failedCount, setFailedCount] = useState<number>(0);
+    const [quizData, setQuizData] = useState({
+        names: ["", "", "", ""],
+        stats: [0, 0, 0, 0],
+        startTime: 0,
+        correctAnswer: 0,
+    });
+    const [statDetails, setStatDetails] = useState({
+        statlink: "",
+        statabbrv: "",
+        statname: "",
+    });
 
     return (
         <GlobalContext.Provider
@@ -70,12 +104,14 @@ export function GlobalProvider({ children }: { children: React.ReactNode }) {
                 setCount,
                 openAnswerPopup,
                 setOpenAnswerPopup,
-                correctAnswer,
-                setCorrectAnswer,
                 submissionCheck,
                 setSubmissionCheck,
                 failedCount,
                 setFailedCount,
+                quizData,
+                setQuizData,
+                statDetails,
+                setStatDetails,
             }}
         >
             {children}

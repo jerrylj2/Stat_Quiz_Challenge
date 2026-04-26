@@ -16,12 +16,12 @@ const revealStyle = {
 };
 
 const StatReveal = ({ playerStat, playerNum }: StatRevealProps) => {
-    const { openAnswerPopup, correctAnswer, selectedPlayer } =
+    const { openAnswerPopup, quizData, selectedPlayer } =
         useContext(GlobalContext);
 
     if (!openAnswerPopup) return null;
 
-    if (playerStat === correctAnswer) {
+    if (playerStat === quizData.correctAnswer) {
         return (
             <Box sx={revealStyle} style={{ color: "#73e673" }}>
                 <Typography
@@ -35,7 +35,7 @@ const StatReveal = ({ playerStat, playerNum }: StatRevealProps) => {
         );
     }
 
-    if (playerStat !== correctAnswer && playerNum === selectedPlayer) {
+    if (playerStat !== quizData.correctAnswer && playerNum === selectedPlayer) {
         return (
             <Box sx={revealStyle} style={{ color: "#f15757" }}>
                 <Typography
