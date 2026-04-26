@@ -17,8 +17,13 @@ interface PlayerDetails {
 }
 
 const PlayerCard = ({ playerNum, playerName, playerStat }: PlayerDetails) => {
-    const { isLoading, cardColors, setSubmission, setSelectedPlayer } =
-        useContext(GlobalContext);
+    const {
+        isLoading,
+        cardColors,
+        setCardColors,
+        setSubmission,
+        setSelectedPlayer,
+    } = useContext(GlobalContext);
 
     let shadow: string = "";
     switch (playerNum) {
@@ -37,7 +42,7 @@ const PlayerCard = ({ playerNum, playerName, playerStat }: PlayerDetails) => {
     }
 
     const updateColors = (color: string) => {
-        const newColors: String[] = [];
+        const newColors: string[] = [];
         cardColors.forEach((card, index: number) => {
             if (index === playerNum - 1) {
                 newColors.push(color);
@@ -45,7 +50,7 @@ const PlayerCard = ({ playerNum, playerName, playerStat }: PlayerDetails) => {
                 newColors.push(cardColor.default);
             }
         });
-        return newColors;
+        setCardColors(newColors);
     };
 
     return (

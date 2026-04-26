@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 import GlobalContext from "../global/GlobalContext";
 import useGetLeaderboard from "../hooks/useGetLeaderboard";
 import useGetRanking from "../hooks/useGetRanking";
+import { cardColor } from "../global/consts/globalConst";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -59,7 +60,16 @@ const Leaderboard = () => {
     const [rank, setRank] = useState<string>("");
     const [rankingMessage, setRankingMessage] = useState<string>("");
 
-    const { username, setScore } = useContext(GlobalContext);
+    const {
+        username,
+        setScore,
+        setCardColors,
+        setSubmission,
+        setSelectedPlayer,
+        setCount,
+        setQuizData,
+        setOpenAnswerPopup,
+    } = useContext(GlobalContext);
 
     const navigate = useNavigate();
 
@@ -160,6 +170,17 @@ const Leaderboard = () => {
                         size="large"
                         onClick={() => {
                             setScore(0);
+                            setCardColors(new Array(4).fill(cardColor.default));
+                            setSubmission(0);
+                            setSelectedPlayer(0);
+                            setCount(1);
+                            setQuizData({
+                                names: ["", "", "", ""],
+                                stats: [0, 0, 0, 0],
+                                startTime: 0,
+                                correctAnswer: 0,
+                            });
+                            setOpenAnswerPopup(false);
                             navigate("/quiz");
                         }}
                     >

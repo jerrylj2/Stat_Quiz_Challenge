@@ -97,8 +97,8 @@ const Quiz = () => {
                             <Grid xs={6}>
                                 <PlayerCard
                                     playerNum={playerNum}
-                                    playerName=""
-                                    playerStat={0}
+                                    playerName={quizData.names[playerNum - 1]}
+                                    playerStat={quizData.stats[playerNum - 1]}
                                 />
                             </Grid>
                         ))}
