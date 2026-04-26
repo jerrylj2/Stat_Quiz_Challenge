@@ -14,12 +14,6 @@ const Welcome = () => {
     const [usernameError, setUsernameError] = useState<string>("");
     const { username, setUsername } = useContext(GlobalContext);
 
-    let disabledWelcomeButton: boolean;
-    if (username.length < 2) {
-        disabledWelcomeButton = true;
-    } else {
-        disabledWelcomeButton = false;
-    }
     const navigate = useNavigate();
     const usernameCheck = (value: string): void => {
         if (!value.match(/[%.*:;+=#{}/,|()&`~?<>\\$'"]/)) {
@@ -70,7 +64,7 @@ const Welcome = () => {
                             onClick={() => {
                                 navigate("/selection");
                             }}
-                            disabled={disabledWelcomeButton}
+                            disabled={username.length < 2}
                         >
                             Next
                         </Button>

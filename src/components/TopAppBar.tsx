@@ -4,27 +4,22 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Avatar from "@mui/material/Avatar";
-import { memo, useContext } from "react";
+import { useContext } from "react";
 import GlobalContext from "../global/GlobalContext";
 
-interface AppBarUsername {
-    username: string;
-    count: string;
-    score: number;
+interface AppBarProps {
     showCount: boolean;
     showScore: boolean;
 }
 
-const TopAppBar = (props: AppBarUsername) => {
-    const { username } = useContext(GlobalContext);
+const TopAppBar = ({ showCount, showScore }: AppBarProps) => {
+    const { username, count, score } = useContext(GlobalContext);
     let usernameFormatted: string;
     if (username.length > 9) {
         usernameFormatted = username.substring(0, 7) + "...";
     } else {
         usernameFormatted = username;
     }
-
-    let countColor: string = props.showCount ? "black" : "#ffad33";
 
     return (
         <Box sx={{ flexGrow: 1 }}>
@@ -33,8 +28,15 @@ const TopAppBar = (props: AppBarUsername) => {
                     sx={{ color: "black", backgroundColor: "#ffad33" }}
                     variant="dense"
                 >
-                    <Avatar sx={{ width: 80, height: 40, bgcolor: countColor }}>
-                        <Typography variant="h6">{props.count}</Typography>
+                    <Avatar
+                        sx={{
+                            width: 80,
+                            height: 40,
+                            bgcolor: showCount ? "black" : "#ffad33",
+                            color: showCount ? "white" : "#ffad33",
+                        }}
+                    >
+                        <Typography variant="h6">{count}</Typography>
                     </Avatar>
                     <Typography
                         variant="h6"
@@ -45,14 +47,14 @@ const TopAppBar = (props: AppBarUsername) => {
                         Stat Quiz Challenge
                     </Typography>
                     <Badge
-                        badgeContent={props.score}
+                        badgeContent={score}
                         color="success"
                         max={1000000}
                         anchorOrigin={{
                             vertical: "bottom",
                             horizontal: "right",
                         }}
-                        invisible={!props.showScore}
+                        invisible={!showScore}
                         showZero
                     >
                         <Avatar
@@ -69,4 +71,4 @@ const TopAppBar = (props: AppBarUsername) => {
     );
 };
 
-export default memo(TopAppBar);
+export default TopAppBar;

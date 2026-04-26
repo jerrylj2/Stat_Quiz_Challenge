@@ -45,56 +45,23 @@ const StyledTableHeader = styled(TableHead)(({}) => ({
     },
 }));
 
-const Leaderboard = () => {
-    interface leaderboard {
-        username: string;
-        score: number;
-    }
+interface leaderboard {
+    username: string;
+    score: number;
+}
 
+const Leaderboard = () => {
     const [rowData, setRowData] = useState<leaderboard[]>([
         { username: "", score: 0 },
     ]);
     const [rank, setRank] = useState<string>("");
+    const [rankingMessage, setRankingMessage] = useState<string>("");
 
     const { username, score, setScore } = useContext(GlobalContext);
 
-    let rank_length: number = rank.length;
-    let last_characters: string = "";
-    let ordinal_rank: string = "";
-    let rank_message: string = "";
     const navigate = useNavigate();
 
-    if (score > 0) {
-        last_characters = rank.substring(rank.length - 2);
-        if (
-            last_characters === "11" ||
-            last_characters === "12" ||
-            last_characters === "13"
-        ) {
-            ordinal_rank = rank + "th";
-        } else {
-            switch (rank.charAt(rank_length - 1)) {
-                case "1":
-                    ordinal_rank = rank + "st";
-                    break;
-                case "2":
-                    ordinal_rank = rank + "nd";
-                    break;
-                case "3":
-                    ordinal_rank = rank + "rd";
-                    break;
-                default:
-                    ordinal_rank = rank + "th";
-            }
-        }
-        rank_message =
-            "You ranked " + ordinal_rank + " with a score of " + score + "!";
-    } else {
-        rank_message = "";
-    }
-
     useEffect(() => {
-        // Gets leaderboard data stored in DB
         fetch(process.env.REACT_APP_API_URL + "/leaderboard")
             .then((res) => res.json())
             .then((data) => {
@@ -107,6 +74,42 @@ const Leaderboard = () => {
             });
     }, []);
 
+    useEffect(() => {
+        if (rank === "") return;
+        let ordinal_rank: string = "";
+        let rank_message: string = "";
+
+        if (score > 0) {
+            if (["11", "12", "13"].includes(rank.substring(rank.length - 2))) {
+                ordinal_rank = rank + "th";
+            } else {
+                switch (rank.charAt(rank.length - 1)) {
+                    case "1":
+                        ordinal_rank = rank + "st";
+                        break;
+                    case "2":
+                        ordinal_rank = rank + "nd";
+                        break;
+                    case "3":
+                        ordinal_rank = rank + "rd";
+                        break;
+                    default:
+                        ordinal_rank = rank + "th";
+                }
+            }
+            rank_message =
+                "You ranked " +
+                ordinal_rank +
+                " with a score of " +
+                score +
+                "!";
+        } else {
+            rank_message = "";
+        }
+
+        setRankingMessage(rank_message);
+    }, [rank]);
+
     if (username === "") {
         navigate("/", { replace: true });
         return <></>;
@@ -114,13 +117,7 @@ const Leaderboard = () => {
 
     return (
         <>
-            <TopAppBar
-                username={username}
-                count={""}
-                score={score}
-                showCount={false}
-                showScore={true}
-            ></TopAppBar>
+            <TopAppBar showCount={false} showScore={true}></TopAppBar>
             <Container maxWidth="lg" component="main">
                 <Box
                     sx={{
@@ -137,7 +134,7 @@ const Leaderboard = () => {
                             align="center"
                             sx={{ fontWeight: 600, color: "green" }}
                         >
-                            {rank_message}
+                            {rankingMessage}
                         </Typography>
                     </Box>
                     <TableContainer

@@ -158,6 +158,8 @@ const Popup = () => {
             </div>
         );
     }
+
+    return null;
 };
 
 export default Popup;

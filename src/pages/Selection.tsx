@@ -1,4 +1,3 @@
-import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -7,22 +6,13 @@ import { Button, Checkbox } from "@mui/material";
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import TopAppBar from "../components/TopAppBar";
-import "../StatApp.css";
-import GlobalContext from "../global/GlobalContext";
 
 const Selection = () => {
-    const { username } = useContext(GlobalContext);
     const navigate = useNavigate();
 
     return (
         <>
-            <TopAppBar
-                username={username}
-                count={""}
-                score={0}
-                showCount={false}
-                showScore={false}
-            ></TopAppBar>
+            <TopAppBar showCount={false} showScore={false}></TopAppBar>
             <Container component="main" maxWidth="lg">
                 <Box
                     sx={{

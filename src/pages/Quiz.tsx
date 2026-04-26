@@ -176,13 +176,7 @@ const Quiz = () => {
 
     return (
         <>
-            <TopAppBar
-                username={username}
-                count={count + "/10"}
-                score={score}
-                showCount={true}
-                showScore={true}
-            ></TopAppBar>
+            <TopAppBar showCount={true} showScore={true}></TopAppBar>
             <Container maxWidth="sm" component="main">
                 <Box
                     sx={{
@@ -214,7 +208,6 @@ const Quiz = () => {
                             </Grid>
                         ))}
                     </Grid>
-                    <Popup />
                     <Typography
                         variant="body2"
                         color="text.secondary"
@@ -249,6 +242,7 @@ const Quiz = () => {
                     Submit
                 </Button>
             </Box>
+            <Popup />
         </>
     );
 };
