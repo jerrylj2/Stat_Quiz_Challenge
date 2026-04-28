@@ -44,9 +44,9 @@ const Welcome = () => {
                             margin="normal"
                             required
                             fullWidth
-                            id="email"
+                            id="username"
                             label="Username"
-                            name="email"
+                            name="username"
                             value={username}
                             color="success"
                             onChange={(e) => usernameCheck(e.target.value)}
