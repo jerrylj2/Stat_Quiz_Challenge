@@ -5,7 +5,6 @@ import Typography from "@mui/material/Typography";
 import { CardActionArea, Skeleton } from "@mui/material";
 import Box from "@mui/material/Box";
 import StatReveal from "./StatReveal";
-import Button from "@mui/material/Button";
 import { useContext } from "react";
 import { cardColor } from "../global/consts/globalConst";
 import QuizContext from "../global/QuizContext";
@@ -83,6 +82,7 @@ const PlayerCard = ({
                         <Box
                             sx={{
                                 position: "relative",
+                                height: 230,
                             }}
                         >
                             {/* <CardMedia
@@ -92,11 +92,6 @@ const PlayerCard = ({
                                         sx={{ width: 260 }}
                                         alt={player.players.name}
                                     /> */}
-                            <Button
-                                sx={{ height: 230 }}
-                                color="success"
-                                fullWidth
-                            ></Button>
                             <StatReveal
                                 playerNum={playerNum}
                                 playerStat={playerStat}

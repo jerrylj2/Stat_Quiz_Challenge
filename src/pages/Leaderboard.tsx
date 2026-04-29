@@ -5,7 +5,6 @@ import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
 import TopAppBar from "../components/TopAppBar";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
@@ -31,20 +30,20 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
     // hide last border
-    "&:last-child td, &:last-child th": {
+    "&:last-of-type td, &:last-of-type th": {
         border: 0,
     },
-    "&:first-child": {
+    "&:first-of-type": {
         backgroundColor: theme.palette.neutral.main,
     },
 }));
 
 const StyledTableHeader = styled(TableHead)(() => ({
-    "th: nth-child(1)": {
+    "th: nth-of-type(1)": {
         borderRadius: "50px 0 0 0",
     },
 
-    "th: nth-child(3)": {
+    "th: nth-of-type(3)": {
         borderRadius: "0 50px 0 0",
     },
 }));
@@ -114,24 +113,29 @@ const Leaderboard = () => {
                         }}
                     >
                         <Table
-                            sx={{ maxWidth: 300, borderRadius: "50px" }}
+                            sx={{
+                                maxWidth: 300,
+                                borderRadius: "50px",
+                                bgcolor: "white",
+                            }}
                             aria-label="customized table"
-                            component={Paper}
                         >
                             <StyledTableHeader>
-                                <StyledTableCell align="center">
-                                    Rank
-                                </StyledTableCell>
-                                <StyledTableCell align="center">
-                                    Username
-                                </StyledTableCell>
-                                <StyledTableCell align="center">
-                                    Score
-                                </StyledTableCell>
+                                <TableRow>
+                                    <StyledTableCell align="center">
+                                        Rank
+                                    </StyledTableCell>
+                                    <StyledTableCell align="center">
+                                        Username
+                                    </StyledTableCell>
+                                    <StyledTableCell align="center">
+                                        Score
+                                    </StyledTableCell>
+                                </TableRow>
                             </StyledTableHeader>
                             <TableBody>
                                 {rowData.map((row, index) => (
-                                    <StyledTableRow>
+                                    <StyledTableRow key={index}>
                                         <StyledTableCell
                                             component="th"
                                             scope="row"

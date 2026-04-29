@@ -100,7 +100,7 @@ const Quiz = () => {
                     </Box>
                     <Grid container spacing={2}>
                         {[1, 2, 3, 4].map((playerNum) => (
-                            <Grid xs={6}>
+                            <Grid xs={6} key={playerNum}>
                                 <PlayerCard
                                     playerNum={playerNum}
                                     playerName={quizData.names[playerNum - 1]}
