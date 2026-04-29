@@ -3,20 +3,8 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { useNavigate } from "react-router-dom";
-
-interface PopupType {
-    handleClose(): void;
-    open: boolean;
-    answer: string;
-    count: number;
-    setCount: React.Dispatch<React.SetStateAction<number>>;
-    setFailedCount: React.Dispatch<React.SetStateAction<number>>;
-    addCount(): void;
-    tally(): void;
-    score: number;
-    setScore: React.Dispatch<React.SetStateAction<number>>;
-    field: string;
-}
+import { useContext } from "react";
+import QuizContext from "../global/QuizContext";
 
 const style = {
     position: "absolute" as "absolute",
@@ -31,13 +19,16 @@ const style = {
     p: 4,
 };
 
-const Popup = (props: PopupType) => {
+const Popup = ({ submissionCheck }: { submissionCheck: string }) => {
+    const { count, setCount, setScore, openAnswerPopup, setOpenAnswerPopup } =
+        useContext(QuizContext);
+
     const navigate = useNavigate();
 
-    if (props.answer === "correct" && props.count !== 10) {
+    if (submissionCheck === "correct" && count !== 10) {
         return (
             <div>
-                <Modal open={props.open}>
+                <Modal open={openAnswerPopup}>
                     <Box sx={style} style={{ backgroundColor: "#73e673" }}>
                         <Typography
                             variant="h2"
@@ -55,8 +46,8 @@ const Popup = (props: PopupType) => {
                                 size="small"
                                 fullWidth
                                 onClick={() => {
-                                    props.addCount();
-                                    props.handleClose();
+                                    setCount((prev: number) => prev + 1);
+                                    setOpenAnswerPopup(false);
                                 }}
                             >
                                 Next
@@ -66,10 +57,62 @@ const Popup = (props: PopupType) => {
                 </Modal>
             </div>
         );
-    } else if (props.answer === "correct" && props.count === 10) {
+    }
+
+    if (submissionCheck === "incorrect") {
         return (
             <div>
-                <Modal open={props.open}>
+                <Modal open={openAnswerPopup}>
+                    <Box sx={style} style={{ backgroundColor: "#f15757" }}>
+                        <Typography
+                            variant="h2"
+                            component="h2"
+                            align="center"
+                            sx={{ fontWeight: 500 }}
+                        >
+                            Incorrect!
+                        </Typography>
+                        <Box
+                            sx={{
+                                display: "flex",
+                                justifyContent: "space-evenly",
+                            }}
+                        >
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                color="neutral"
+                                size="small"
+                                onClick={() => {
+                                    navigate("/leaderboard");
+                                }}
+                            >
+                                View Leaderboard
+                            </Button>
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                color="neutral"
+                                size="small"
+                                onClick={() => {
+                                    setOpenAnswerPopup(false);
+                                    setScore(0);
+                                    count === 1 ? setCount(0) : setCount(1);
+                                }}
+                            >
+                                Try Again!
+                            </Button>
+                        </Box>
+                    </Box>
+                </Modal>
+            </div>
+        );
+    }
+
+    if (submissionCheck === "correct" && count === 10) {
+        return (
+            <div>
+                <Modal open={openAnswerPopup}>
                     <Box sx={style} style={{ backgroundColor: "#73e673" }}>
                         <Typography
                             variant="h4"
@@ -106,61 +149,8 @@ const Popup = (props: PopupType) => {
             </div>
         );
     }
-    if (props.answer === "incorrect") {
-        return (
-            <div>
-                <Modal open={props.open}>
-                    <Box sx={style} style={{ backgroundColor: "#f15757" }}>
-                        <Typography
-                            variant="h2"
-                            component="h2"
-                            align="center"
-                            sx={{ fontWeight: 500 }}
-                        >
-                            Incorrect!
-                        </Typography>
-                        <Box
-                            sx={{
-                                display: "flex",
-                                justifyContent: "space-evenly",
-                            }}
-                        >
-                            <Button
-                                type="submit"
-                                variant="contained"
-                                color="neutral"
-                                size="small"
-                                onClick={() => {
-                                    navigate("/leaderboard");
-                                }}
-                            >
-                                View Leaderboard
-                            </Button>
-                            <Button
-                                type="submit"
-                                variant="contained"
-                                color="neutral"
-                                size="small"
-                                onClick={() => {
-                                    props.handleClose();
-                                    props.setScore(0);
-                                    props.count === 1
-                                        ? props.setFailedCount(
-                                              (prev) => prev + 1,
-                                          )
-                                        : props.setCount(1);
-                                }}
-                            >
-                                Try Again!
-                            </Button>
-                        </Box>
-                    </Box>
-                </Modal>
-            </div>
-        );
-    } else {
-        return null;
-    }
+
+    return null;
 };
 
 export default Popup;

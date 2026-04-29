@@ -5,25 +5,18 @@ import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
 import TopAppBar from "../components/TopAppBar";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
-import { useState, useEffect, useContext } from "react";
+import { useState, useContext } from "react";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import GlobalContext from "../global/GlobalContext";
-
-const theme = createTheme({
-    palette: {
-        neutral: {
-            main: "#ffad33",
-            contrastText: "#000000",
-        },
-    },
-});
+import useGetLeaderboard from "../hooks/useGetLeaderboard";
+import useGetRanking from "../hooks/useGetRanking";
+import { cardColor } from "../global/consts/globalConst";
+import QuizContext from "../global/QuizContext";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -37,85 +30,53 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
     // hide last border
-    "&:last-child td, &:last-child th": {
+    "&:last-of-type td, &:last-of-type th": {
         border: 0,
     },
-    "&:first-child": {
+    "&:first-of-type": {
         backgroundColor: theme.palette.neutral.main,
     },
 }));
 
-const StyledTableHeader = styled(TableHead)(({}) => ({
-    "th: nth-child(1)": {
+const StyledTableHeader = styled(TableHead)(() => ({
+    "th: nth-of-type(1)": {
         borderRadius: "50px 0 0 0",
     },
 
-    "th: nth-child(3)": {
+    "th: nth-of-type(3)": {
         borderRadius: "0 50px 0 0",
     },
 }));
 
-const Leaderboard = () => {
-    interface leaderboard {
-        username: string;
-        score: number;
-    }
+interface leaderboard {
+    username: string;
+    score: number;
+}
 
+const Leaderboard = () => {
     const [rowData, setRowData] = useState<leaderboard[]>([
         { username: "", score: 0 },
     ]);
     const [rank, setRank] = useState<string>("");
+    const [rankingMessage, setRankingMessage] = useState<string>("");
 
-    const { username, score, setScore } = useContext(GlobalContext);
+    const { username } = useContext(GlobalContext);
+    const {
+        setScore,
+        setCardColors,
+        setSubmission,
+        setSelectedPlayer,
+        setCount,
+        setQuizData,
+        setOpenAnswerPopup,
+        count,
+    } = useContext(QuizContext);
 
-    let rank_length: number = rank.length;
-    let last_characters: string = "";
-    let ordinal_rank: string = "";
-    let rank_message: string = "";
     const navigate = useNavigate();
 
-    if (score > 0) {
-        last_characters = rank.substring(rank.length - 2);
-        if (
-            last_characters === "11" ||
-            last_characters === "12" ||
-            last_characters === "13"
-        ) {
-            ordinal_rank = rank + "th";
-        } else {
-            switch (rank.charAt(rank_length - 1)) {
-                case "1":
-                    ordinal_rank = rank + "st";
-                    break;
-                case "2":
-                    ordinal_rank = rank + "nd";
-                    break;
-                case "3":
-                    ordinal_rank = rank + "rd";
-                    break;
-                default:
-                    ordinal_rank = rank + "th";
-            }
-        }
-        rank_message =
-            "You ranked " + ordinal_rank + " with a score of " + score + "!";
-    } else {
-        rank_message = "";
-    }
+    useGetLeaderboard(setRowData, setRank);
 
-    useEffect(() => {
-        // Gets leaderboard data stored in DB
-        fetch(process.env.REACT_APP_API_URL + "/leaderboard")
-            .then((res) => res.json())
-            .then((data) => {
-                if (data.leaderboard !== undefined) {
-                    setRowData(data.leaderboard);
-                }
-                if (data.rank?.place !== undefined) {
-                    setRank(data.rank.place + "");
-                }
-            });
-    }, []);
+    useGetRanking(rank, setRankingMessage);
 
     if (username === "") {
         navigate("/", { replace: true });
@@ -123,14 +84,8 @@ const Leaderboard = () => {
     }
 
     return (
-        <ThemeProvider theme={theme}>
-            <TopAppBar
-                username={username}
-                count={""}
-                score={score}
-                showCount={false}
-                showScore={true}
-            ></TopAppBar>
+        <>
+            <TopAppBar showCount={false} showScore={true}></TopAppBar>
             <Container maxWidth="lg" component="main">
                 <Box
                     sx={{
@@ -147,7 +102,7 @@ const Leaderboard = () => {
                             align="center"
                             sx={{ fontWeight: 600, color: "green" }}
                         >
-                            {rank_message}
+                            {rankingMessage}
                         </Typography>
                     </Box>
                     <TableContainer
@@ -158,24 +113,29 @@ const Leaderboard = () => {
                         }}
                     >
                         <Table
-                            sx={{ maxWidth: 300, borderRadius: "50px" }}
+                            sx={{
+                                maxWidth: 300,
+                                borderRadius: "50px",
+                                bgcolor: "white",
+                            }}
                             aria-label="customized table"
-                            component={Paper}
                         >
                             <StyledTableHeader>
-                                <StyledTableCell align="center">
-                                    Rank
-                                </StyledTableCell>
-                                <StyledTableCell align="center">
-                                    Username
-                                </StyledTableCell>
-                                <StyledTableCell align="center">
-                                    Score
-                                </StyledTableCell>
+                                <TableRow>
+                                    <StyledTableCell align="center">
+                                        Rank
+                                    </StyledTableCell>
+                                    <StyledTableCell align="center">
+                                        Username
+                                    </StyledTableCell>
+                                    <StyledTableCell align="center">
+                                        Score
+                                    </StyledTableCell>
+                                </TableRow>
                             </StyledTableHeader>
                             <TableBody>
                                 {rowData.map((row, index) => (
-                                    <StyledTableRow>
+                                    <StyledTableRow key={index}>
                                         <StyledTableCell
                                             component="th"
                                             scope="row"
@@ -216,6 +176,17 @@ const Leaderboard = () => {
                         size="large"
                         onClick={() => {
                             setScore(0);
+                            setCardColors(new Array(4).fill(cardColor.default));
+                            setSubmission(0);
+                            setSelectedPlayer(0);
+                            count === 1 ? setCount(0) : setCount(1);
+                            setQuizData({
+                                names: ["", "", "", ""],
+                                stats: [0, 0, 0, 0],
+                                startTime: 0,
+                                correctAnswer: 0,
+                            });
+                            setOpenAnswerPopup(false);
                             navigate("/quiz");
                         }}
                     >
@@ -223,7 +194,7 @@ const Leaderboard = () => {
                     </Button>
                 </Box>
             </Container>
-        </ThemeProvider>
+        </>
     );
 };
 
